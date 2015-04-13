@@ -1,0 +1,21 @@
+{
+  "name": "cms",
+  "version": "3.0",
+  "homepage": "cms.nanoplex.dk",
+  "authors": [
+    "mathias hansen <mathias.hansen783@gmail.com>"
+  ],
+  "description": "nanoplex cms",
+  "keywords": [
+    "nanoplex",
+    "cms",
+    "polymer",
+    "c#"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "polymer": "polymer/polymer#0.8-preview",
+    "core-ajax": "polymer/core-ajax#0.8-preview",
+    "paper-spinner": "polymer/paper-spinner#0.8-preview"
+  }
+}
