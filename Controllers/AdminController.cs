@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using cms.Models;
-using MongoDB.Driver;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using MongoDB.Driver;
 using MongoDB.Bson;
 
 namespace cms.Controllers
 {
     public class AdminController : Controller
     {
-        static Site _Site { get; set; }
+        static Site _Site = new Site();
 
         [HttpGet]
-        public async Task<JsonResult> Site()
+        public async Task<string> Site()
         {
             try
             {
-                _Site = await cms.Models.DatabaseContext.Site.Find(s => true).FirstOrDefaultAsync();
+                _Site.GetSite();
 
-                return Json(_Site, JsonRequestBehavior.AllowGet);
+                var json = JsonConvert.SerializeObject(_Site);
+
+                return json;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
-                return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                return JsonConvert.SerializeObject(ex.Message);
             }
         }
 
@@ -34,9 +33,9 @@ namespace cms.Controllers
         {
             try
             {
-                var site = await DatabaseContext.Site.Find(new BsonDocument()).ToListAsync();
+                await _Site.GetSite();
 
-                if (site.Count == 0)
+                if (_Site.ProjectName == null)
                     return "new";
                 else
                     return "true";
@@ -48,15 +47,48 @@ namespace cms.Controllers
         }
 
         [HttpPost]
-        public string InitProject(string name)
+        public async Task<string> InitProject(string name)
+        {
+            await _Site.NewSite(name);
+
+            return "true";
+        }
+
+        [HttpPost]
+        public async Task<string> AddPage(string name, int? order)
         {
             try
             {
-                _Site.NewSite(name);
+                var page = DatabaseContext.Pages.Find(Builders<Page>.Filter.Eq(p => p.Name, name)).SingleOrDefaultAsync();
+
+                if (page == null)
+                {
+                    Page.AddPage(name, (int)order);
+
+                    return "true";
+                }
+                else
+                {
+                    return "false";
+                }
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> DeletePage(string id)
+        {
+            try
+            {
+                var Id = ObjectId.Parse(id);
+                Page.DeletePage(Id);
 
                 return "true";
             }
-            catch (MongoDB.Driver.MongoException ex)
+            catch (MongoException ex)
             {
                 return ex.Message;
             }

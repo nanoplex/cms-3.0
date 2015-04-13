@@ -1,7 +1,230 @@
 ﻿<dom-module is="el-admin">
-    
-    <template>
+    <style>
+        * {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
 
+        :host {
+            font-family: roboto, sans-serif;
+            color: #444;
+        }
+
+            :host /deep/ paper-spinner {
+                width: 24px;
+                height: 24px;
+            }
+
+                :host /deep/ paper-spinner /deep/ .paper-spinner {
+                    border-color: #444 !important;
+                }
+
+            :host /deep/ core-icon {
+                color: #444;
+            }
+
+            :host /deep/ button {
+                padding: .5em;
+                margin: 1em 0;
+                background: transparent;
+                border: none;
+                outline: none;
+                border-radius: 50%;
+                -moz-transition: background-color .3s;
+                -o-transition: background-color .3s;
+                -webkit-transition: background-color .3s;
+                transition: background-color .3s;
+            }
+
+                :host /deep/ button:hover, :host /deep/ button:focus {
+                    background-color: rgba(0,0,0,0.25);
+                }
+
+        header {
+            border-bottom: 1px solid;
+            padding: .5em 1em;
+        }
+
+            header #logo {
+                background-color: #2196F3;
+                border-radius: 50%;
+                color: white;
+                padding: .75em;
+                margin-right: 1em;
+            }
+
+                header #logo p {
+                    font-size: 1.5em;
+                    margin: 0;
+                    position: relative;
+                    top: -2px;
+                    line-height: 1.15;
+                }
+
+            header h1 {
+                margin: 0;
+            }
+
+        nav {
+            width: 270px;
+            border-right: 1px solid;
+        }
+        nav section {
+            padding: 0 1em;
+            border-bottom: 1px solid;
+        }
+
+        section[id=views] { width: 100%; }
+
+        article[id^=view] {
+            width: 300px;
+            margin: 0 auto;
+            margin-top: 5em !important;
+        }
+
+            article[id^=view] h2,
+            article[id^=view] label,
+            article[id^=view] textarea,
+            article[id^=view] input {
+                width: 100%;
+            }
+
+            article[id^=view] input {
+                border: none;
+                border-bottom: 1px solid;
+                padding: .5em;
+                margin: 0 0 1em 0;
+                outline: none;
+                -moz-transition: border-width .3s, border-color .3s;
+                -o-transition: border-width .3s, border-color .3s;
+                -webkit-transition: border-width .3s, border-color .3s;
+                transition: border-width .3s, border-color .3s;
+            }
+
+                article[id^=view] input:focus {
+                    border-width: 2px;
+                }
+
+                    article[id^=view] input:focus:invalid {
+                        border-color: #F44336;
+                    }
+
+        article[id^=page] {
+            padding: 1em;
+        }
+
+        #add {
+            position: fixed;
+            right: 1.5em;
+            bottom: 1.5em;
+        }
+
+            #add > button {
+                background: #2196F3;
+                padding: 1.5em;
+            }
+
+                #add > button core-icon {
+                    color: white;
+                }
+
+        #options button {
+            position: relative;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            -moz-transition: right .3s;
+            -o-transition: right .3s;
+            -webkit-transition: right .3s;
+            transition: right .3s;
+        }
+
+            #options button:hover, #options button:focus {
+                background: transparent;
+                right: .5em;
+            }
+
+            #options button p {
+                margin-right: .5em;
+            }
+    </style>
+    <template>
+        <header id="header" class="layout horizontal center" hidden>
+            <div id="logo"><p>np</p></div>
+            <h1 class="flex">{{site.ProjectName}}</h1>
+            <button>
+                <core-icon icon="more-vert" alt="options"></core-icon>
+            </button>
+        </header>
+
+        <section class="layout horizontal flex">
+
+            <nav id="nav" hidden>
+                <template is="x-repeat" items="{{site.Pages}}">
+
+                    <section class="layout horizontal center">
+                        <p class="flex">{{item.Name}}</p>
+                        <button data-id$="{{item.Id}}" on-tap="deletePage">
+                            <core-icon icon="close" alt="delete page"></core-icon>
+                        </button>
+                    </section>
+
+                </template>
+            </nav>
+
+            <section id="views">
+                <article id="viewLoading" class="layout vertical center">
+                    <paper-spinner active></paper-spinner>
+                </article>
+
+                <article id="viewInstall" class="layout vertical center" hidden>
+                    <h2>choose project name</h2>
+
+                    <label for="name">name</label>
+                    <input type="text" name="name" required />
+
+                    <button on-tap="initProject" class="self-end">
+                        <core-icon icon="check" alt="done"></core-icon>
+                    </button>
+                </article>
+
+                <article id="viewLogin" class="layout vertical center" hidden></article>
+
+                <article id="viewAddPage" class="layout vertical center">
+                    <h2>add page</h2>
+
+                    <label for="name">name</label>
+                    <input type="text" name="name" required />
+
+                    <button on-tap="addPage" class="self-end">
+                        <core-icon icon="check" alt="done"></core-icon>
+                    </button>
+                </article>
+
+                <template is="x-repeat" items="{{site.Pages}}">
+
+                    <article id="page{{item.Name}}">
+                        <h2>{{item.Name}}</h2>
+                    </article>
+
+                </template>
+
+            </section>
+
+        </section>
+
+        <section id="add" class="layout vertical center">
+            <section id="options" class="layout vertical center" hidden>
+                <button on-tap="showAddPage" class="layout horizontal center">
+                    <p>page</p>
+                    <core-icon icon="note-add" alt="add page"></core-icon>
+                </button>
+            </section>
+            <button on-tap="showAdd">
+                <core-icon icon="add" alt="add"></core-icon>
+            </button>
+        </section>
     </template>
 </dom-module>
 <script src="el-admin.js"></script>

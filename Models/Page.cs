@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using MongoDB.Bson;
+using MongoDB.Driver;
+using System.Threading.Tasks;
 
 namespace cms.Models
 {
@@ -11,14 +10,30 @@ namespace cms.Models
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; }
+        public int Order { get; set; }
         public List<dynamic> Components { get; set; }
 
-        public void NewPage(string name)
+        public static async Task AddPage(string name, int order)
         {
-            Name = name;
-            Visible = true;
+            var page = new Page { Name = name, Visible = true, Order = order };
 
-            DatabaseContext.Pages.InsertOneAsync(this);
+            await DatabaseContext.Pages.InsertOneAsync(page);
+        }
+        
+        public async Task EditPage()
+        {
+            await DatabaseContext.Pages.UpdateOneAsync<Page>(
+                p => p.Id == Id,
+                Builders<Page>.Update
+                    .Set(p => p.Name, Name)
+                    .Set(p => p.Visible, Visible)
+                    .Set(p => p.Order, Order)
+                    .Set(p => p.Components, Components));
+        }
+
+        public static async Task DeletePage(ObjectId id)
+        {
+            await DatabaseContext.Pages.DeleteOneAsync(Builders<Page>.Filter.Eq(p => p.Id, id));
         }
     }
 }

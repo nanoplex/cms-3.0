@@ -16,6 +16,9 @@
   "dependencies": {
     "polymer": "polymer/polymer#0.8-preview",
     "core-ajax": "polymer/core-ajax#0.8-preview",
+    "core-icon": "polymer/core-icon#0.8-preview",
+    "core-iconset": "Polymer/core-iconset#0.8-preview",
+    "core-icons": "Polymer/core-icons#0.8-preview",
     "paper-spinner": "polymer/paper-spinner#0.8-preview"
   }
 }
