@@ -59,7 +59,7 @@ namespace cms.Controllers
         {
             try
             {
-                var page = DatabaseContext.Pages.Find(Builders<Page>.Filter.Eq(p => p.Name, name)).SingleOrDefaultAsync();
+                var page = await DatabaseContext.Pages.Find(Builders<Page>.Filter.Eq(p => p.Name, name)).SingleOrDefaultAsync();
 
                 if (page == null)
                 {

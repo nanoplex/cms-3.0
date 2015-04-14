@@ -7,6 +7,12 @@ Polymer({
             type: Object,
             value: undefined,
             notify: true
+        },
+        selectedView: {
+            type: String,
+            value: undefined,
+            notify: true,
+            observer: 'viewChanged'
         }
     },
     hostAttributes: {
@@ -17,7 +23,7 @@ Polymer({
 
         var xhrAuth = document.createElement("core-request");
 
-        this.changeView("viewLoading");
+        this.selectedView = "viewLoading";
 
         xhrAuth.send({
             url: "/admin/auth"
@@ -25,7 +31,7 @@ Polymer({
 
         xhrAuth.completes.then(function (response) {
             if (response === "new") {
-                self.changeView("viewInstall");
+                self.selectedView = "viewInstall";
             }
             else if (response === "true") {
                 self.getSite();
@@ -40,49 +46,10 @@ Polymer({
             console.error(why);
         });
     },
-    changeView: function (view) {
-        var views = Polymer.dom(this.$.views).querySelectorAll("article[id]"),
-            title = document.querySelector("title");
-
-        console.log("view", view);
-
-        title.innerHTML = view.replace(/^view/, '').replace(/^page/, '');
-
-        for (var i = 0; i < views.length; i++) {
-            views[i].setAttribute("hidden", "");
-
-            if (views[i].getAttribute("id") === view)
-                views[i].removeAttribute("hidden");
-        }
-    },
-    initProject: function (event) {
-        var xhrInit = document.createElement("core-request"),
-            fd = new FormData(),
-            input = Polymer.dom(this.$.viewInstall).querySelector("input[name=name]"),
-            button = Polymer.dom(this.$.viewInstall).querySelector("button");
-
-        fd.append("name", input.value);
-
-        if (this.validateInputs([input])) {
-            button.innerHTML = "<paper-spinner active></paper-spinner>";
-            button.blur();
-
-            xhrInit.send({
-                url: "/admin/InitProject",
-                method: "POST",
-                body: fd
-            });
-        }
-
-        xhrInit.completes.then(function (response) {
-            if (response === 'true') {
-                self.ready();
-            }
-            else {
-                console.error(response);
-            }
-        }).catch(function (why) {
-            console.error(why);
+    home: function (event) {
+        // core-selector does not respond if timeout is not set
+        window.setTimeout(function () {
+            self.selectedView = self.site.Pages[0].Name;
         });
     },
     validateInputs: function (inputs) {
@@ -106,17 +73,20 @@ Polymer({
             if (response.Id !== undefined) {
                 console.log("site", response);
 
+                response.Pages.sort(function (x, y) {
+                    return y.Order - x.Order;
+                });
+
                 self.site = response;
 
                 self.$.header.removeAttribute("hidden");
 
                 if (self.site.Pages !== null && self.site.Pages.length > 0) {
                     self.$.nav.removeAttribute("hidden");
-
-                    self.changeView("page" + self.site.Pages[0].Name);
+                    self.selectedView = self.site.Pages[0].Name;
                 }
                 else
-                    self.changeView("viewAddPage");
+                    self.selectedView = "viewAddPage";
             }
             else
                 console.error(response);
@@ -124,20 +94,76 @@ Polymer({
             console.error(why);
         })
     },
+    viewChanged: function (newVal, oldVal) {
+        // does not get pages first time if timeout is not set
+        window.setTimeout(function () {
+            var pages = Polymer.dom(self.$.nav).querySelectorAll("section");
+
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].classList.remove("selected");
+
+                if (pages[i].querySelector("p").innerHTML === newVal)
+                    pages[i].classList.add("selected");
+            }
+        });  
+    },
+    initProject: function (event) {
+        var xhrInit = document.createElement("core-request"),
+            fd = new FormData(),
+            input = Polymer.dom(this.$.viewInstall).querySelector("input[name=name]"),
+            button = Polymer.dom(this.$.viewInstall).querySelector("button");
+
+        fd.append("name", input.value);
+
+
+        if (this.validateInputs([input])) {
+            button.innerHTML = "<paper-spinner active></paper-spinner>";
+            button.blur();
+
+            input.valid = null;
+
+            xhrInit.send({
+                url: "/admin/InitProject",
+                method: "POST",
+                body: fd
+            });
+        }
+
+        xhrInit.completes.then(function (response) {
+            button.innerHTML = "<core-icon icon='check' alt='done'></core-icon>";
+
+            if (response === 'true') {
+                self.ready();
+            }
+            else {
+                console.error(response);
+            }
+        }).catch(function (why) {
+            console.error(why);
+        });
+    },
     addPage: function (event) {
         var xhrPage = document.createElement("core-request"),
             fd = new FormData(),
             name = Polymer.dom(this.$.viewAddPage).querySelector("input[name=name]"),
+            status = Polymer.dom(this.$.viewAddPage).querySelector(".status"),
+            btn = Polymer.dom(this.$.viewAddPage).querySelector("button"),
             pages = this.site.Pages;
 
         fd.append("name", name.value);
+        
 
         if (pages !== null && pages.length > 0)
-            fd.append("order", pages[pages.length].Order);
+            fd.append("order", (pages[0].Order + 1));
         else
             fd.append("order", 0);
 
         if (this.validateInputs([name])) {
+            name.value = null;
+
+            btn.innerHTML = "<paper-spinner active></paper-spinner>";
+            btn.blur();
+
             xhrPage.send({
                 url: "/admin/addPage",
                 body: fd,
@@ -146,10 +172,13 @@ Polymer({
         }
 
         xhrPage.completes.then(function (response) {
+            btn.innerHTML = "<core-icon icon='check' alt='done'></core-icon>";
+            status.innerHTML = "";
+
             if (response === "true")
                 self.ready();
             else if (response === "false")
-                /*page exists*/;
+                status.innerHTML = "page name is already taken";
             else
                 console.error(response);
         }).catch(function (why) {
@@ -184,13 +213,16 @@ Polymer({
             console.error(why);
         });
     },
-    showAdd: function (event) {
+    selectPage: function (event) {
+        this.selectedView = event.target.innerHTML;
+    },
+    toggleAdd: function (event) {
         if (this.$.options.getAttribute("hidden") == null)
             this.$.options.setAttribute("hidden", "");
         else
             this.$.options.removeAttribute("hidden");
     },
     showAddPage: function (event) {
-        this.changeView("viewAddPage");
+        this.selectedView = "viewAddPage";
     }
 })

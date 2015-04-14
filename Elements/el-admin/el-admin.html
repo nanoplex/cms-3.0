@@ -69,13 +69,37 @@
         nav {
             width: 270px;
             border-right: 1px solid;
-        }
-        nav section {
-            padding: 0 1em;
-            border-bottom: 1px solid;
+            overflow-y: auto;
         }
 
-        section[id=views] { width: 100%; }
+            nav section {
+                padding: 0 1em;
+                border-bottom: 1px solid;
+                border-color: #444;
+                -moz-transition: background-color .3s;
+                -o-transition: background-color .3s;
+                -webkit-transition: background-color .3s;
+                transition: background-color .3s;
+            }
+
+                nav section.selected {
+                    background-color: #2196F3;
+                    color: white;
+                }
+                nav section.selected core-icon { color: white; }
+
+        core-selector {
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        :host article[view] {
+            display: none;
+        }
+
+        core-selector article.core-selected {
+            display: block;
+        }
 
         article[id^=view] {
             width: 300px;
@@ -83,6 +107,7 @@
             margin-top: 5em !important;
         }
 
+            article[id^=view] > section,
             article[id^=view] h2,
             article[id^=view] label,
             article[id^=view] textarea,
@@ -110,7 +135,7 @@
                         border-color: #F44336;
                     }
 
-        article[id^=page] {
+        article.page {
             padding: 1em;
         }
 
@@ -150,9 +175,10 @@
             }
     </style>
     <template>
+
         <header id="header" class="layout horizontal center" hidden>
             <div id="logo"><p>np</p></div>
-            <h1 class="flex">{{site.ProjectName}}</h1>
+            <h1 class="flex">[[site.ProjectName]]</h1>
             <button>
                 <core-icon icon="more-vert" alt="options"></core-icon>
             </button>
@@ -161,11 +187,11 @@
         <section class="layout horizontal flex">
 
             <nav id="nav" hidden>
-                <template is="x-repeat" items="{{site.Pages}}">
+                <template is="x-repeat" items="[[site.Pages]]">
 
                     <section class="layout horizontal center">
-                        <p class="flex">{{item.Name}}</p>
-                        <button data-id$="{{item.Id}}" on-tap="deletePage">
+                        <p on-tap="selectPage" class="flex">[[item.Name]]</p>
+                        <button data-id$="[[item.Id]]" on-tap="deletePage">
                             <core-icon icon="close" alt="delete page"></core-icon>
                         </button>
                     </section>
@@ -173,12 +199,13 @@
                 </template>
             </nav>
 
-            <section id="views">
-                <article id="viewLoading" class="layout vertical center">
+            <core-selector attr-for-selected="view" selected="{{selectedView}}">
+
+                <article view="viewLoading" id="viewLoading" class="layout vertical center">
                     <paper-spinner active></paper-spinner>
                 </article>
 
-                <article id="viewInstall" class="layout vertical center" hidden>
+                <article view="viewInstall" id="viewInstall" class="layout vertical center">
                     <h2>choose project name</h2>
 
                     <label for="name">name</label>
@@ -189,28 +216,37 @@
                     </button>
                 </article>
 
-                <article id="viewLogin" class="layout vertical center" hidden></article>
+                <article view="viewLogin" id="viewLogin" class="layout vertical center"></article>
 
-                <article id="viewAddPage" class="layout vertical center">
-                    <h2>add page</h2>
+                <article view="viewAddPage" id="viewAddPage" class="layout vertical center">
+                    <section class="layout horizontal center">
+                        <h2 class="flex">add page</h2>
+                        <button on-tap="home">
+                            <core-icon icon="close" alt="close"></core-icon>
+                        </button>
+                    </section>
+
 
                     <label for="name">name</label>
                     <input type="text" name="name" required />
 
-                    <button on-tap="addPage" class="self-end">
-                        <core-icon icon="check" alt="done"></core-icon>
-                    </button>
+                    <section class="layout horizontal center">
+                        <p class="status flex"></p>
+                        <button on-tap="addPage">
+                            <core-icon icon="check" alt="done"></core-icon>
+                        </button>
+                    </section>
                 </article>
 
-                <template is="x-repeat" items="{{site.Pages}}">
+                <template is="x-repeat" items="[[site.Pages]]">
 
-                    <article id="page{{item.Name}}">
-                        <h2>{{item.Name}}</h2>
+                    <article view$="[[item.Name]]" class="page">
+                        <h2>[[item.Name]]</h2>
                     </article>
 
                 </template>
 
-            </section>
+            </core-selector>
 
         </section>
 
@@ -221,7 +257,7 @@
                     <core-icon icon="note-add" alt="add page"></core-icon>
                 </button>
             </section>
-            <button on-tap="showAdd">
+            <button on-tap="toggleAdd">
                 <core-icon icon="add" alt="add"></core-icon>
             </button>
         </section>
