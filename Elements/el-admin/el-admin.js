@@ -109,9 +109,7 @@ Polymer({
                                 var component = page.Components[b],
                                     viewComponent = document.createElement("article"),
                                     headerSection = document.createElement("section"),
-                                    header = document.createElement("h3"),
-                                    button = document.createElement("button"),
-                                    icon = document.createElement("core-icon");
+                                    button = document.createElement("button");
 
                                 self.listen(viewComponent, "tap", "showEditComponent");
                                 viewComponent.setAttribute("tabindex", "0");
@@ -126,52 +124,23 @@ Polymer({
                                 headerSection.classList.add("style-scope");
                                 headerSection.classList.add("el-admin");
 
-                                header.innerHTML = component.Name;
-                                header.classList.add("flex");
-                                header.classList.add("style-scope");
-                                header.classList.add("el-admin");
-
-                                icon.setAttribute("icon", "close");
-                                icon.classList.add("style-scope");
-                                icon.classList.add("el-admin");
-
                                 self.listen(button, "tap", "deleteComponent");
                                 button.classList.add("style-scope");
                                 button.classList.add("el-admin");
+                                button.innerHTML = "<core-icon icon='close' class='style-scope el-admin'></core-icon>";
 
-                                Polymer.dom(button).appendChild(icon);
-
-                                Polymer.dom(headerSection).appendChild(header)
+                                headerSection.innerHTML += "<h3 class='flex style-scope el-admin'>" + component.Name + "</h3>";
                                 Polymer.dom(headerSection).appendChild(button);
 
                                 Polymer.dom(viewComponent).appendChild(headerSection);
 
                                 for (var c = 0; c < component.Properties.length; c++) {
-                                    var prop = component.Properties[c],
-                                        propertySection = document.createElement("section"),
-                                        name = document.createElement("b"),
-                                        value = document.createElement("p");
+                                    var prop = component.Properties[c];
 
-                                    propertySection.classList.add("property");
-                                    propertySection.classList.add("layout");
-                                    propertySection.classList.add("horizontal");
-                                    propertySection.classList.add("center");
-                                    propertySection.classList.add("style-scope");
-                                    propertySection.classList.add("el-admin");
-
-                                    name.innerHTML = prop.Name;
-                                    name.classList.add("flex");
-                                    name.classList.add("style-scope");
-                                    name.classList.add("el-admin");
-
-                                    value.innerHTML = prop.Value;
-                                    value.classList.add("style-scope");
-                                    value.classList.add("el-admin");
-
-                                    Polymer.dom(propertySection).appendChild(name);
-                                    Polymer.dom(propertySection).appendChild(value);
-
-                                    Polymer.dom(viewComponent).appendChild(propertySection);
+                                    viewComponent.innerHTML += "<section class='property layout horizontal center style-scope el-admin'>" +
+                                        "<b class='flex style-scope el-admin'>" + prop.Name + "<b>" +
+                                        "<p class='style-scope el-admin'>" + prop.Value + "<p>" +
+                                    "</section>";
                                 }
 
                                 Polymer.dom(components).appendChild(viewComponent);
