@@ -82,9 +82,11 @@ Polymer({
                 self.site = response;
 
                 self.$.header.removeAttribute("hidden");
+                self.$.add.removeAttribute("hidden");
 
                 if (self.site.Pages !== null && self.site.Pages.length > 0) {
                     self.$.nav.removeAttribute("hidden");
+
                     if (self.lastView !== undefined)
                         self.selectedView = self.lastView;
                     else
@@ -357,7 +359,7 @@ Polymer({
         component._Id = selected.Id;
         component.Name = selected.Name;
         component.Properties = selected.Properties;
-        
+
         this.$.viewComponent.innerHTML = '';
         Polymer.dom(this.$.viewComponent).appendChild(component);
 
@@ -380,7 +382,7 @@ Polymer({
                 if (p.Name == this.selectedView) {
                     page = p;
                     break;
-                }  
+                }
             }
 
             for (var i = 0; i < page.Components.length; i++) {
@@ -402,8 +404,8 @@ Polymer({
             window.setTimeout(function () {
                 self.selectedView = "viewComponent";
             });
-            
+
             first = true;
         }
     }
-})
+});
