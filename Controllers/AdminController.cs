@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace cms.Controllers
 {
@@ -59,11 +61,13 @@ namespace cms.Controllers
         {
             try
             {
-                var page = await DatabaseContext.Pages.Find(Builders<Page>.Filter.Eq(p => p.Name, name)).SingleOrDefaultAsync();
+                var page = await DatabaseContext.Pages.Find(
+                    Builders<Page>.Filter.Eq(p => p.Name, name))
+                    .SingleOrDefaultAsync();
 
                 if (page == null)
                 {
-                    Page.AddPage(name, (int)order);
+                    Page.Add(name, (int)order);
 
                     return "true";
                 }
@@ -84,7 +88,29 @@ namespace cms.Controllers
             try
             {
                 var Id = ObjectId.Parse(id);
-                Page.DeletePage(Id);
+                Page.Delete(Id);
+
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> AddComponent(string name, string properties, string pageName)
+        {
+            try
+            {
+                var component = _Site.Components.Where(c => c.Name == name).FirstOrDefault();
+                var page = _Site.Pages.Where(p => p.Name == pageName).FirstOrDefault();
+
+                Component.Add(
+                    name, 
+                    JsonConvert.DeserializeObject<List<Property>>(properties), 
+                    component.Frontend, 
+                    page.Id);
 
                 return "true";
             }

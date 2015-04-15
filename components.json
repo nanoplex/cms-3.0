@@ -1,0 +1,18 @@
+﻿[
+    {
+        "Name": "text",
+        "Frontend":  "<p style='font-size:{{size}}px'>{{text}}</p>",
+        "Properties": [
+            {
+                "Name": "text",
+                "Type": "string",
+                "Validation": "true"
+            },
+            {
+                "Name": "size",
+                "Type": "int",
+                "Validation":  "true"
+            }
+        ]
+    }
+]

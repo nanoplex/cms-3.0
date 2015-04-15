@@ -1,0 +1,91 @@
+﻿<dom-module is="el-component">
+    <style>
+    </style>
+    <template>
+        <h2 class="flex">[[Name]]</h2>
+
+        <section id="props"></section>
+
+        <button on-tap="finish" class="flex-end">
+            <core-icon icon="check" alt="finish"></core-icon>
+        </button>
+
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "el-component",
+        properties: {
+            _Id: String,
+            Name: String,
+            Properties: {
+                type: Object,
+                value: undefined,
+                notify: true,
+                observer: "propsChanged"
+            }
+        },
+        listeners: {
+            'property-changed': 'propChanged'
+        },
+        propsChanged: function (newVal, oldVal) {
+            if (oldVal === undefined) {
+                this.$.props.innerHTML = "";
+
+                for (var i = 0; i < newVal.length; i++) {
+                    var prop = newVal[i],
+                        elProp = document.createElement("el-property");
+
+                    // name must be set firt so all values are set when the observer fires
+                    elProp.Type = prop.Type;
+                    elProp.Value = prop.Value;
+                    elProp.Validation = prop.Validation;
+                    elProp.Name = prop.Name;
+
+                    Polymer.dom(this.$.props).appendChild(elProp);
+                }
+            }
+        },
+        propChanged: function (event) {
+            var prop = event.detail;
+
+            for (var i = 0; i < this.Properties.length; i++) {
+                var myProp = this.Properties[i];
+
+                if (myProp.Name === prop.Name) {
+                    myProp.Value = prop.Value;
+                    this.setAttribute("properties", JSON.stringify(this.Properties));
+                }
+            }
+        },
+        finish: function (event) {
+            if (this._Id === "000000000000000000000000") {
+                this.add();
+            }
+            else {
+                // edit
+            }
+        },
+        add: function () {
+            var xhrAdd = document.createElement("core-request"),
+                fd = new FormData();
+
+
+            fd.append("name", this.Name);
+            fd.append("properties", this.getAttribute("properties"));
+            fd.append("pageName", document.querySelector("el-admin").lastView);
+
+            xhrAdd.send({
+                url: "/admin/addcomponent",
+                method: "POST",
+                body: fd
+            });
+
+            xhrAdd.completes.then(function (response) {
+                console.log(response);
+            }).catch(function (why) {
+                console.error(why);
+            });
+        }
+    })
+</script>

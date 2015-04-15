@@ -37,7 +37,8 @@
                 transition: background-color .3s;
             }
 
-                :host /deep/ button:hover, :host /deep/ button:focus {
+                :host /deep/ button:hover,
+                :host /deep/ button:focus {
                     background-color: rgba(0,0,0,0.25);
                 }
 
@@ -86,7 +87,10 @@
                     background-color: #2196F3;
                     color: white;
                 }
-                nav section.selected core-icon { color: white; }
+
+                    nav section.selected core-icon {
+                        color: white;
+                    }
 
         core-selector {
             width: 100%;
@@ -108,14 +112,16 @@
         }
 
             article[id^=view] > section,
-            article[id^=view] h2,
-            article[id^=view] label,
-            article[id^=view] textarea,
-            article[id^=view] input {
+            article[id^=view] /deep/ h2,
+            article[id^=view] /deep/ label,
+            article[id^=view] /deep/ select,
+            article[id^=view] /deep/ textarea,
+            article[id^=view] /deep/ input {
                 width: 100%;
             }
 
-            article[id^=view] input {
+            article[id^=view] /deep/ input,
+            article[id^=view] /deep/ select {
                 border: none;
                 border-bottom: 1px solid;
                 padding: .5em;
@@ -127,11 +133,12 @@
                 transition: border-width .3s, border-color .3s;
             }
 
-                article[id^=view] input:focus {
+                article[id^=view] /deep/ input:focus,
+                article[id^=view] /deep/ select:focus {
                     border-width: 2px;
                 }
 
-                    article[id^=view] input:focus:invalid {
+                    article[id^=view] /deep/ input:focus:invalid {
                         border-color: #F44336;
                     }
 
@@ -165,7 +172,8 @@
             transition: right .3s;
         }
 
-            #options button:hover, #options button:focus {
+            #options button:hover,
+            #options button:focus {
                 background: transparent;
                 right: .5em;
             }
@@ -176,72 +184,166 @@
     </style>
     <template>
 
-        <header id="header" class="layout horizontal center" hidden>
+        <header id="header" hidden
+                class="layout horizontal center">
+
             <div id="logo"><p>np</p></div>
+
             <h1 class="flex">[[site.ProjectName]]</h1>
+
             <button>
-                <core-icon icon="more-vert" alt="options"></core-icon>
+                <core-icon icon="more-vert"
+                           alt="options">
+                </core-icon>
             </button>
+
         </header>
 
         <section class="layout horizontal flex">
 
             <nav id="nav" hidden>
-                <template is="x-repeat" items="[[site.Pages]]">
+
+                <template is="x-repeat"
+                          items="[[site.Pages]]">
 
                     <section class="layout horizontal center">
-                        <p on-tap="selectPage" class="flex">[[item.Name]]</p>
-                        <button data-id$="[[item.Id]]" on-tap="deletePage">
-                            <core-icon icon="close" alt="delete page"></core-icon>
+
+                        <p on-tap="selectPage"
+                           class="flex">[[item.Name]]</p>
+
+                        <button data-id$="[[item.Id]]"
+                                on-tap="deletePage">
+
+                            <core-icon icon="close"
+                                       alt="delete page">
+                            </core-icon>
+
                         </button>
+
                     </section>
 
                 </template>
+
             </nav>
 
-            <core-selector attr-for-selected="view" selected="{{selectedView}}">
+            <core-selector attr-for-selected="view"
+                           selected="{{selectedView}}">
 
-                <article view="viewLoading" id="viewLoading" class="layout vertical center">
-                    <paper-spinner active></paper-spinner>
+                <article id="viewLoading"
+                         view="viewLoading"
+                         class="layout vertical center">
+
+                    <paper-spinner active>
+                    </paper-spinner>
+
                 </article>
 
-                <article view="viewInstall" id="viewInstall" class="layout vertical center">
+                <article id="viewInstall"
+                         view="viewInstall"
+                         class="layout vertical center">
+
                     <h2>choose project name</h2>
 
                     <label for="name">name</label>
-                    <input type="text" name="name" required />
 
-                    <button on-tap="initProject" class="self-end">
-                        <core-icon icon="check" alt="done"></core-icon>
+                    <input type="text"
+                           name="name"
+                           required />
+
+                    <button on-tap="initProject"
+                            class="self-end">
+
+                        <core-icon icon="check"
+                                   alt="done">
+                        </core-icon>
+
                     </button>
                 </article>
 
-                <article view="viewLogin" id="viewLogin" class="layout vertical center"></article>
+                <article id="viewLogin"
+                         view="viewLogin"
+                         class="layout vertical center"></article>
 
-                <article view="viewAddPage" id="viewAddPage" class="layout vertical center">
+                <article id="viewAddPage"
+                         view="viewAdd-Page"
+                         class="layout vertical center">
+
                     <section class="layout horizontal center">
+
                         <h2 class="flex">add page</h2>
+
+                        <button on-tap="home">
+
+                            <core-icon icon="close"
+                                       alt="close">
+                            </core-icon>
+
+                        </button>
+
+                    </section>
+
+
+                    <label for="name">name</label>
+
+                    <input type="text"
+                           name="name"
+                           required />
+
+                    <section class="layout horizontal center">
+
+                        <p class="status flex"></p>
+
+                        <button on-tap="addPage">
+                            <core-icon icon="check"
+                                       alt="done">
+                            </core-icon>
+                        </button>
+
+                    </section>
+                </article>
+
+                <article id="viewSelectComponent"
+                         view="viewSelect-Component"
+                         class="layout vertical center">
+
+                    <section class="layout horizontal center">
+                        <h2>select component type</h2>
                         <button on-tap="home">
                             <core-icon icon="close" alt="close"></core-icon>
                         </button>
                     </section>
 
+                    <select></select>
 
-                    <label for="name">name</label>
-                    <input type="text" name="name" required />
+                    <button on-tap="showAddComponent"
+                            class="self-end">
 
-                    <section class="layout horizontal center">
-                        <p class="status flex"></p>
-                        <button on-tap="addPage">
-                            <core-icon icon="check" alt="done"></core-icon>
-                        </button>
-                    </section>
+                        <core-icon icon="check"
+                                   alt="add component">
+                        </core-icon>
+
+                    </button>
+
                 </article>
 
-                <template is="x-repeat" items="[[site.Pages]]">
+                <article id="viewComponent"
+                         view="viewComponent"
+                         class="layout vertical center">
 
-                    <article view$="[[item.Name]]" class="page">
+                    <el-component></el-component>
+
+                </article>
+
+                <template is="x-repeat"
+                          items="[[site.Pages]]">
+
+                    <article view$="[[item.Name]]"
+                             class="page">
+
                         <h2>[[item.Name]]</h2>
+
+                        <p>[[item.Components.length]]</p>
+
                     </article>
 
                 </template>
@@ -250,16 +352,44 @@
 
         </section>
 
-        <section id="add" class="layout vertical center">
-            <section id="options" class="layout vertical center" hidden>
-                <button on-tap="showAddPage" class="layout horizontal center">
+        <section id="add"
+                 class="layout vertical center">
+
+            <section id="options"
+                     class="layout vertical end"
+                     hidden>
+                <button on-tap="showAddPage"
+                        class="layout horizontal center">
+
                     <p>page</p>
-                    <core-icon icon="note-add" alt="add page"></core-icon>
+
+                    <core-icon icon="note-add"
+                               alt="add page">
+                    </core-icon>
+
                 </button>
+
+                <button on-tap="showSelectComponent"
+                        class="layout horizontal center">
+
+                    <p>component</p>
+
+                    <core-icon icon="extension"
+                               alt="add component">
+                    </core-icon>
+
+                </button>
+
             </section>
+
             <button on-tap="toggleAdd">
-                <core-icon icon="add" alt="add"></core-icon>
+
+                <core-icon icon="add"
+                           alt="add">
+                </core-icon>
+
             </button>
+
         </section>
     </template>
 </dom-module>

@@ -13,7 +13,8 @@ Polymer({
             value: undefined,
             notify: true,
             observer: 'viewChanged'
-        }
+        },
+        lastView: String
     },
     hostAttributes: {
         'class': "layout vertical fit"
@@ -49,7 +50,7 @@ Polymer({
     home: function (event) {
         // core-selector does not respond if timeout is not set
         window.setTimeout(function () {
-            self.selectedView = self.site.Pages[0].Name;
+            self.selectedView = self.lastView;
         });
     },
     validateInputs: function (inputs) {
@@ -95,6 +96,12 @@ Polymer({
         })
     },
     viewChanged: function (newVal, oldVal) {
+        if (oldVal !== undefined)
+            if (oldVal.match(/^view/) === null)
+                this.lastView = oldVal;
+
+        document.querySelector("title").innerHTML = newVal.replace(/^view/, '').replace(/-/, ' ') + " - admin";
+
         // does not get pages first time if timeout is not set
         window.setTimeout(function () {
             var pages = Polymer.dom(self.$.nav).querySelectorAll("section");
@@ -105,7 +112,7 @@ Polymer({
                 if (pages[i].querySelector("p").innerHTML === newVal)
                     pages[i].classList.add("selected");
             }
-        });  
+        });
     },
     initProject: function (event) {
         var xhrInit = document.createElement("core-request"),
@@ -151,7 +158,7 @@ Polymer({
             pages = this.site.Pages;
 
         fd.append("name", name.value);
-        
+
 
         if (pages !== null && pages.length > 0)
             fd.append("order", (pages[0].Order + 1));
@@ -223,6 +230,30 @@ Polymer({
             this.$.options.removeAttribute("hidden");
     },
     showAddPage: function (event) {
-        this.selectedView = "viewAddPage";
+        this.selectedView = "viewAdd-Page";
+    },
+    showSelectComponent: function (event) {
+        var select = Polymer.dom(this.$.viewSelectComponent).querySelector("select");
+
+        for (var i = 0; i < this.site.Components.length; i++) {
+            var component = this.site.Components[i];
+
+            select.innerHTML += "<option value='" + component.Name + "'>" + component.Name + "</options>";
+        }
+
+        this.selectedView = "viewSelect-Component";
+    },
+    showAddComponent: function (event) {
+        var select = Polymer.dom(this.$.viewSelectComponent).querySelector("select"),
+            selected = this.site.Components[select.selectedIndex],
+            component = Polymer.dom(this.$.viewComponent).querySelector("el-component");
+
+        component._Id = selected.Id;
+        component.Name = selected.Name;
+        component.Properties = selected.Properties;
+
+        window.setTimeout(function () {
+            self.selectedView = "viewComponent";
+        });
     }
 })

@@ -11,16 +11,16 @@ namespace cms.Models
         public string Name { get; set; }
         public bool Visible { get; set; }
         public int Order { get; set; }
-        public List<dynamic> Components { get; set; }
+        public List<Component> Components { get; set; }
 
-        public static async Task AddPage(string name, int order)
+        public static async Task Add(string name, int order)
         {
             var page = new Page { Name = name, Visible = true, Order = order };
 
             await DatabaseContext.Pages.InsertOneAsync(page);
         }
         
-        public async Task EditPage()
+        public async Task Edit()
         {
             await DatabaseContext.Pages.UpdateOneAsync<Page>(
                 p => p.Id == Id,
@@ -31,9 +31,10 @@ namespace cms.Models
                     .Set(p => p.Components, Components));
         }
 
-        public static async Task DeletePage(ObjectId id)
+        public static async Task Delete(ObjectId id)
         {
-            await DatabaseContext.Pages.DeleteOneAsync(Builders<Page>.Filter.Eq(p => p.Id, id));
+            await DatabaseContext.Pages.DeleteOneAsync(
+                p => p.Id ==  id);
         }
     }
 }

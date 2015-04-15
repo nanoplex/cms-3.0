@@ -1,0 +1,53 @@
+﻿<dom-module is="el-property">
+    <style>
+    </style>
+    <template>
+
+        <label for="[[Name]]">[[Name]]</label>
+
+        <input id="input" name="[[Name]]" on-input="input"/>
+    
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "el-property",
+        properties: {
+            Name: {
+                type: String,
+                value: undefined,
+                notify: true,
+                observer: "init"
+            },
+            Type: String,
+            Value: {
+                type: Object,
+                value: undefined,
+                notify: true,
+                reflectToAttribute: true
+            },
+            Validation: String
+        },
+        init: function () {
+            if (this.Type === "string")
+                this.$.input.setAttribute("type", "text");
+            else if (this.Type === 'int')
+                this.$.input.setAttribute("type", "number");
+
+            if (this.Validation !== "false")
+                this.$.input.setAttribute("required", "");
+
+            if (this.Validation !== "false" && this.Validation !== "true")
+                this.$.input.setAttribute("pattern", this.Validation);
+        },
+        input: function (event) {
+            this.Value = event.target.value;
+            
+            this.fire("property-changed", {
+                "Name": this.Name,
+                "Type": this.Type,
+                "Value": this.Value
+            });
+        }
+    });
+</script>
