@@ -21,29 +21,30 @@
             Properties: {
                 type: Object,
                 value: undefined,
-                notify: true,
-                observer: "propsChanged"
-            }
+                notify: true
+            },
+            nested: Boolean
         },
         listeners: {
             'property-changed': 'propChanged'
         },
-        propsChanged: function (newVal, oldVal) {
-            if (oldVal === undefined) {
-                this.$.props.innerHTML = "";
+        attached: function () {
+            this.$.props.innerHTML = "";
 
-                for (var i = 0; i < newVal.length; i++) {
-                    var prop = newVal[i],
-                        elProp = document.createElement("el-property");
+            if (this.nested)
+                this.querySelector("button").setAttribute("hidden", "");
 
-                    // name must be set firt so all values are set when the observer fires
-                    elProp.Type = prop.Type;
-                    elProp.Value = prop.Value;
-                    elProp.Validation = prop.Validation;
-                    elProp.Name = prop.Name;
+            for (var i = 0; i < this.Properties.length; i++) {
+                var prop = this.Properties[i],
+                    elProp = document.createElement("el-property");
 
-                    Polymer.dom(this.$.props).appendChild(elProp);
-                }
+                // name must be set firt so all values are set when the observer fires
+                elProp.Type = prop.Type;
+                elProp.Value = prop.Value;
+                elProp.Validation = prop.Validation;
+                elProp.Name = prop.Name;
+
+                Polymer.dom(this.$.props).appendChild(elProp);
             }
         },
         propChanged: function (event) {
@@ -55,15 +56,19 @@
                 if (myProp.Name === prop.Name) {
                     myProp.Value = prop.Value;
                     this.setAttribute("properties", JSON.stringify(this.Properties));
+                    break;
                 }
             }
+
+            if (this.nested)
+                this.fire("properties-changed", this.Properties);
         },
         finish: function (event) {
             if (this._Id === "000000000000000000000000") {
                 this.add();
             }
             else {
-                // edit
+                this.edit();
             }
         },
         add: function () {
@@ -82,7 +87,28 @@
             });
 
             xhrAdd.completes.then(function (response) {
-                console.log(response);
+                if (response === "true")
+                    document.querySelector("el-admin").ready();
+            }).catch(function (why) {
+                console.error(why);
+            });
+        },
+        edit: function () {
+            var xhrEdit = document.createElement("core-request"),
+                fd = new FormData();
+
+            fd.append("id", this._Id);
+            fd.append("properties", this.getAttribute("properties"));
+
+            xhrEdit.send({
+                url: "/admin/editcomponent",
+                method: "POST",
+                body: fd
+            });
+
+            xhrEdit.completes.then(function (response) {
+                if (response === "true")
+                    self.ready();
             }).catch(function (why) {
                 console.error(why);
             });

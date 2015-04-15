@@ -99,6 +99,27 @@ namespace cms.Controllers
         }
 
         [HttpPost]
+        public async Task<string> TogglePageVisibility(string id)
+        {
+            try
+            {
+                var Id = ObjectId.Parse(id);
+
+                var page = _Site.Pages.Where(p => p.Id == Id).FirstOrDefault();
+
+                page.Visible = !page.Visible;
+
+                page.Edit();
+
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost]
         public async Task<string> AddComponent(string name, string properties, string pageName)
         {
             try
@@ -107,10 +128,54 @@ namespace cms.Controllers
                 var page = _Site.Pages.Where(p => p.Name == pageName).FirstOrDefault();
 
                 Component.Add(
-                    name, 
-                    JsonConvert.DeserializeObject<List<Property>>(properties), 
-                    component.Frontend, 
+                    name,
+                    JsonConvert.DeserializeObject<List<Property>>(properties),
+                    component.Frontend,
                     page.Id);
+
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> EditComponent(string id, string properties)
+        {
+            try
+            {
+                var Id = ObjectId.Parse(id);
+                Component component = new Component();
+
+                foreach (var page in _Site.Pages)
+                {
+                    component = page.Components.Where(c => c.Id == Id).FirstOrDefault();
+                    if (component != null)
+                        break;
+                }
+
+                component.Properties = JsonConvert.DeserializeObject<List<Property>>(properties);
+
+                component.Edit();
+
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> DeleteComponent(string id)
+        {
+            try
+            {
+                var Id = ObjectId.Parse(id);
+
+                Component.Delete(Id);
 
                 return "true";
             }

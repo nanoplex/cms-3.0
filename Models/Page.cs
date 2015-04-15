@@ -25,10 +25,8 @@ namespace cms.Models
             await DatabaseContext.Pages.UpdateOneAsync<Page>(
                 p => p.Id == Id,
                 Builders<Page>.Update
-                    .Set(p => p.Name, Name)
                     .Set(p => p.Visible, Visible)
-                    .Set(p => p.Order, Order)
-                    .Set(p => p.Components, Components));
+                    .Set(p => p.Order, Order));
         }
 
         public static async Task Delete(ObjectId id)

@@ -27,12 +27,13 @@ namespace cms.Models
                 File.ReadAllText(HttpContext.Current.Server.MapPath("/components.json")));
 
             Pages = await DatabaseContext.Pages.Find(new BsonDocument()).ToListAsync();
+
             Pages.ForEach(p =>
             {
                 var components = DatabaseContext.Components.Find(Builders<Component>.Filter.Eq(c => c.PageFk, p.Id)).ToListAsync();
                 components.Wait();
-                if (!components.IsFaulted)
-                    p.Components = components.Result;
+
+                p.Components = components.Result;
             });
         }
 

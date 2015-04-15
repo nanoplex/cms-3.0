@@ -1,4 +1,5 @@
-﻿var self;
+﻿var self,
+    first = true;
 
 Polymer({
     is: "el-admin",
@@ -84,7 +85,99 @@ Polymer({
 
                 if (self.site.Pages !== null && self.site.Pages.length > 0) {
                     self.$.nav.removeAttribute("hidden");
-                    self.selectedView = self.site.Pages[0].Name;
+                    if (self.lastView !== undefined)
+                        self.selectedView = self.lastView;
+                    else
+                        self.selectedView = self.site.Pages[0].Name;
+
+                    window.setTimeout(function () {
+                        var pages = document.querySelectorAll("core-selector article.page");
+
+                        for (var a = 0; a < pages.length; a++) {
+                            var page = self.site.Pages[a],
+                                icon = Polymer.dom(pages[a]).querySelector("section:first-child button core-icon"),
+                                components = Polymer.dom(pages[a]).querySelector(".components");
+
+                            if (page.Visible)
+                                icon.setAttribute("icon", "visibility");
+                            else
+                                icon.setAttribute("icon", "visibility-off")
+
+                            components.innerHTML = '';
+
+                            for (var b = 0; b < page.Components.length; b++) {
+                                var component = page.Components[b],
+                                    viewComponent = document.createElement("article"),
+                                    headerSection = document.createElement("section"),
+                                    header = document.createElement("h3"),
+                                    button = document.createElement("button"),
+                                    icon = document.createElement("core-icon");
+
+                                self.listen(viewComponent, "tap", "showEditComponent");
+                                viewComponent.setAttribute("tabindex", "0");
+                                viewComponent.setAttribute("data-id", component.Id);
+                                viewComponent.classList.add("component");
+                                viewComponent.classList.add("style-scope");
+                                viewComponent.classList.add("el-admin");
+
+                                headerSection.classList.add("layout");
+                                headerSection.classList.add("horizontal");
+                                headerSection.classList.add("center");
+                                headerSection.classList.add("style-scope");
+                                headerSection.classList.add("el-admin");
+
+                                header.innerHTML = component.Name;
+                                header.classList.add("flex");
+                                header.classList.add("style-scope");
+                                header.classList.add("el-admin");
+
+                                icon.setAttribute("icon", "close");
+                                icon.classList.add("style-scope");
+                                icon.classList.add("el-admin");
+
+                                self.listen(button, "tap", "deleteComponent");
+                                button.classList.add("style-scope");
+                                button.classList.add("el-admin");
+
+                                Polymer.dom(button).appendChild(icon);
+
+                                Polymer.dom(headerSection).appendChild(header)
+                                Polymer.dom(headerSection).appendChild(button);
+
+                                Polymer.dom(viewComponent).appendChild(headerSection);
+
+                                for (var c = 0; c < component.Properties.length; c++) {
+                                    var prop = component.Properties[c],
+                                        propertySection = document.createElement("section"),
+                                        name = document.createElement("b"),
+                                        value = document.createElement("p");
+
+                                    propertySection.classList.add("property");
+                                    propertySection.classList.add("layout");
+                                    propertySection.classList.add("horizontal");
+                                    propertySection.classList.add("center");
+                                    propertySection.classList.add("style-scope");
+                                    propertySection.classList.add("el-admin");
+
+                                    name.innerHTML = prop.Name;
+                                    name.classList.add("flex");
+                                    name.classList.add("style-scope");
+                                    name.classList.add("el-admin");
+
+                                    value.innerHTML = prop.Value;
+                                    value.classList.add("style-scope");
+                                    value.classList.add("el-admin");
+
+                                    Polymer.dom(propertySection).appendChild(name);
+                                    Polymer.dom(propertySection).appendChild(value);
+
+                                    Polymer.dom(viewComponent).appendChild(propertySection);
+                                }
+
+                                Polymer.dom(components).appendChild(viewComponent);
+                            }
+                        }
+                    })
                 }
                 else
                     self.selectedView = "viewAddPage";
@@ -220,8 +313,52 @@ Polymer({
             console.error(why);
         });
     },
+    togglePageVisibility: function (event) {
+        var xhrVisibility = document.createElement("core-request"),
+            fd = new FormData();
+
+        for (var i = 0; i < this.site.Pages.length; i++) {
+            var page = this.site.Pages[i];
+
+            if (page.Name === this.selectedView)
+                fd.append("id", page.Id);
+        }
+
+        xhrVisibility.send({
+            url: "/admin/togglepagevisibility",
+            method: "POST",
+            body: fd
+        });
+
+        xhrVisibility.completes.then(function (response) {
+            if (response === "true")
+                self.ready();
+        }).catch(function (why) {
+            console.error(why);
+        })
+    },
     selectPage: function (event) {
         this.selectedView = event.target.innerHTML;
+    },
+    deleteComponent: function (event) {
+        var xhrDeleteComponent = document.createElement("core-request"),
+            fd = new FormData(),
+            id = event.path[(event.path.length - 9)].getAttribute("data-id");
+
+        fd.append("id", id);
+
+        xhrDeleteComponent.send({
+            url: "/admin/deletecomponent",
+            method: "POST",
+            body: fd
+        });
+
+        xhrDeleteComponent.completes.then(function (response) {
+            if (response === "true")
+                self.ready();
+        }).catch(function (why) {
+            console.error(why);
+        });
     },
     toggleAdd: function (event) {
         if (this.$.options.getAttribute("hidden") == null)
@@ -246,14 +383,58 @@ Polymer({
     showAddComponent: function (event) {
         var select = Polymer.dom(this.$.viewSelectComponent).querySelector("select"),
             selected = this.site.Components[select.selectedIndex],
-            component = Polymer.dom(this.$.viewComponent).querySelector("el-component");
+            component = document.createElement("el-component");
 
         component._Id = selected.Id;
         component.Name = selected.Name;
         component.Properties = selected.Properties;
+        
+        this.$.viewComponent.innerHTML = '';
+        Polymer.dom(this.$.viewComponent).appendChild(component);
 
         window.setTimeout(function () {
             self.selectedView = "viewComponent";
         });
+    },
+    showEditComponent: function (event) {
+        if (first)
+            first = false;
+        else {
+            var elComponent = document.createElement("el-component"),
+                componentId = event.path[(event.path.length - 9)].getAttribute("data-id"),
+                page,
+                component;
+
+            for (var i = 0; i < this.site.Pages.length; i++) {
+                var p = this.site.Pages[i];
+
+                if (p.Name == this.selectedView) {
+                    page = p;
+                    break;
+                }  
+            }
+
+            for (var i = 0; i < page.Components.length; i++) {
+                var c = page.Components[i];
+
+                if (componentId == c.Id) {
+                    component = c;
+                    break;
+                }
+            }
+
+            elComponent._Id = component.Id;
+            elComponent.Name = component.Name;
+            elComponent.Properties = component.Properties;
+
+            this.$.viewComponent.innerHTML = '';
+            Polymer.dom(this.$.viewComponent).appendChild(elComponent);
+
+            window.setTimeout(function () {
+                self.selectedView = "viewComponent";
+            });
+            
+            first = true;
+        }
     }
 })
