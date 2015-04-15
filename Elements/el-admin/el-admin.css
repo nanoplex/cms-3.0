@@ -1,3 +1,247 @@
-﻿body {
-    font-family: roboto;
+﻿* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
+
+:host {
+    font-family: roboto, sans-serif;
+    color: #444;
+}
+
+    :host /deep/ paper-spinner {
+        width: 24px;
+        height: 24px;
+    }
+
+        :host /deep/ paper-spinner /deep/ .paper-spinner {
+            border-color: #444 !important;
+        }
+
+    :host /deep/ core-icon {
+        fill: #444;
+    }
+
+    :host /deep/ button {
+        padding: .5em;
+        margin: 1em 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        border-radius: 50%;
+        -moz-transition: background-color .3s;
+        -o-transition: background-color .3s;
+        -webkit-transition: background-color .3s;
+        transition: background-color .3s;
+    }
+
+        :host /deep/ button:hover,
+        :host /deep/ button:focus {
+            background-color: rgba(0,0,0,0.25);
+        }
+
+header {
+    border-bottom: 1px solid;
+    padding: .5em 1em;
+}
+
+    header #logo {
+        background-color: #2196F3;
+        border-radius: 50%;
+        color: white;
+        padding: .75em;
+        margin-right: 1em;
+    }
+
+        header #logo p {
+            font-size: 1.5em;
+            margin: 0;
+            position: relative;
+            top: -2px;
+            line-height: 1.15;
+        }
+
+    header h1 {
+        margin: 0;
+    }
+
+nav {
+    width: 270px;
+    border-right: 1px solid;
+    overflow-y: auto;
+}
+
+    nav section {
+        padding: 0 1em 0 0;
+        border-bottom: 1px solid;
+        border-color: #444;
+        -moz-transition: background-color .3s;
+        -o-transition: background-color .3s;
+        -webkit-transition: background-color .3s;
+        transition: background-color .3s;
+    }
+
+        nav section.selected {
+            background-color: #2196F3;
+            color: white;
+        }
+
+            nav section.selected button:hover, nav section.selected button:focus {
+                background-color: rgba(255, 255, 255, 0.25);
+            }
+
+            nav section.selected core-icon {
+                fill: white;
+            }
+
+        nav section p {
+            margin: 0;
+            padding: 1em 0 1em 1em;
+        }
+
+core-selector {
+    width: 100%;
+    overflow-y: auto;
+}
+
+:host article[view] {
+    display: none;
+}
+
+core-selector article.core-selected {
+    display: block;
+}
+
+article[id^=view] {
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 5em !important;
+}
+
+    article[id^=view] > section,
+    article[id^=view] /deep/ h2,
+    article[id^=view] /deep/ label,
+    article[id^=view] /deep/ select,
+    article[id^=view] /deep/ textarea,
+    article[id^=view] /deep/ input {
+        width: 100%;
+    }
+
+    article[id^=view] /deep/ input,
+    article[id^=view] /deep/ select,
+    article[id^=view] /deep/ textarea {
+        border: none;
+        border-bottom: 1px solid;
+        padding: .5em;
+        margin: 0 0 1em 0;
+        outline: none;
+        -moz-transition: border-width .3s, border-color .3s;
+        -o-transition: border-width .3s, border-color .3s;
+        -webkit-transition: border-width .3s, border-color .3s;
+        transition: border-width .3s, border-color .3s;
+    }
+
+    article[id^=view] /deep/ textarea {
+        height: 50px;
+        min-width: 100%;
+    }
+
+        article[id^=view] /deep/ input:focus,
+        article[id^=view] /deep/ select:focus,
+        article[id^=view] /deep/ textarea:focus {
+            border-width: 2px;
+        }
+
+            article[id^=view] /deep/ input:focus:invalid {
+                border-color: #F44336;
+            }
+
+.page {
+    padding: 1em;
+}
+
+.component {
+    border: 1px solid;
+    margin-right: 2em;
+    min-width: 130px;
+    outline: none;
+}
+
+    .component section:first-child {
+        padding: 1em;
+        background: #757575;
+        -moz-transition: background-color .3s;
+        -o-transition: background-color .3s;
+        -webkit-transition: background-color .3s;
+        transition: background-color .3s;
+    }
+
+    .component:focus section:first-child {
+        background: #2196F3;
+    }
+
+    .component section:first-child h3 {
+        margin: 0;
+        color: white;
+    }
+
+    .component button {
+        margin: 0;
+    }
+
+        .component button:hover, .component button:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .component button core-icon {
+            fill: white;
+        }
+
+.property {
+    padding: 0 1em;
+    border-bottom: 1px solid;
+}
+
+    .property:last-child {
+        border-bottom: none;
+    }
+
+    .property b {
+        margin-right: 1em;
+    }
+
+#add {
+    position: fixed;
+    right: 1.5em;
+    bottom: 1.5em;
+}
+
+    #add > button {
+        background: #2196F3;
+        padding: 1.5em;
+    }
+
+        #add > button core-icon {
+            fill: white;
+        }
+
+#options button {
+    position: relative;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    -moz-transition: right .3s;
+    -o-transition: right .3s;
+    -webkit-transition: right .3s;
+    transition: right .3s;
+}
+
+    #options button:hover,
+    #options button:focus {
+        background: transparent;
+        right: .5em;
+    }
+
+    #options button p {
+        margin-right: .5em;
+    }
