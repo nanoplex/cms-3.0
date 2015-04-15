@@ -2,7 +2,7 @@
 
 Nanoplex CMS (beta)
 
-Mathias Hansen mathias.hansen783@gmail.com
+created by Mathias Hansen <mathias.hansen783@gmail.com>
 
 I made this CMS because i pretty mouch made the same backend for every project i created, so this CMS manages the database and getting the right stuff to the right pages, so you can focus on the frontend code for the project.
 
