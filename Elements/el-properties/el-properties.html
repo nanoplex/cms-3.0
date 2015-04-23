@@ -1,0 +1,28 @@
+﻿<dom-module is="el-properties">
+    <style>
+        section {
+            border: 1px solid black;
+            border-top: none;
+        }
+
+        b, p {
+            margin: .5em 1em;
+        }
+    </style>
+    <template>
+        <template is="x-repeat" items="[[properties]]">
+            <section class="property layout horizontal center justified">
+                <b>[[item.Name]]</b>
+                <p>[[item.Value]]</p>
+            </section>
+        </template>
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "el-properties",
+        properties: {
+            properties: Object
+        }
+    });
+</script>

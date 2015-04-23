@@ -3,12 +3,12 @@
     properties: {
         _Id: String,
         Name: String,
+        nested: Boolean,
         Properties: {
             type: Object,
             value: undefined,
             notify: true
-        },
-        nested: Boolean
+        }
     },
     listeners: {
         'property-changed': 'propChanged'
@@ -28,6 +28,13 @@
             elProp.Value = prop.Value;
             elProp.Validation = prop.Validation;
             elProp.Name = prop.Name;
+
+            this.propChanged({
+                "detail": {
+                    "Name": prop.Name,
+                    "Type": prop.Type,
+                    "Value": prop.Value
+                }});
 
             Polymer.dom(this.$.props).appendChild(elProp);
         }
@@ -49,17 +56,14 @@
             this.fire("properties-changed", this.Properties);
     },
     finish: function (event) {
-        if (this._Id === "000000000000000000000000") {
+        if (this._Id === "000000000000000000000000")
             this.add();
-        }
-        else {
+        else
             this.edit();
-        }
     },
     add: function () {
         var xhrAdd = document.createElement("core-request"),
             fd = new FormData();
-
 
         fd.append("name", this.Name);
         fd.append("properties", this.getAttribute("properties"));

@@ -48,6 +48,15 @@ Polymer({
             console.error(why);
         });
     },
+    isComponentPropertyType: function (type) {
+        var result = false;
+        this.site.Components.forEach(function (component, i, array) {
+            if (component.Name === type)
+                result = true;
+        });
+
+        return result;
+    },
     home: function (event) {
         // core-selector does not respond if timeout is not set
         window.setTimeout(function () {
@@ -81,77 +90,37 @@ Polymer({
 
                 self.site = response;
 
-                self.$.header.removeAttribute("hidden");
-                self.$.add.removeAttribute("hidden");
+                self.$.header.hidden = false;
+                self.$.add.hidden = false;
 
                 if (self.site.Pages !== null && self.site.Pages.length > 0) {
-                    self.$.nav.removeAttribute("hidden");
+                    var selector = document.querySelector("core-selector");
+
+                    for (var a = 0; a < self.site.Pages.length; a++) {
+                        var page = self.site.Pages[a],
+                            elPage = document.createElement("el-page"),
+                            oldElPages = selector.querySelectorAll("el-page");
+
+                        for (var b = 0; b < oldElPages.length; b++) {
+                            Polymer.dom(selector).removeChild(oldElPages[b]);
+                        }
+
+                        elPage.name = page.Name;
+                        elPage.visible = page.Visible;
+                        elPage.components = page.Components;
+
+                        Polymer.dom(selector).appendChild(elPage);
+                    }
+
+                    self.$.nav.hidden = false;
 
                     if (self.lastView !== undefined)
                         self.selectedView = self.lastView;
                     else
                         self.selectedView = self.site.Pages[0].Name;
-
-                    window.setTimeout(function () {
-                        var pages = document.querySelectorAll("core-selector article.page");
-
-                        for (var a = 0; a < pages.length; a++) {
-                            var page = self.site.Pages[a],
-                                icon = Polymer.dom(pages[a]).querySelector("section:first-child button core-icon"),
-                                components = Polymer.dom(pages[a]).querySelector(".components");
-
-                            if (page.Visible)
-                                icon.setAttribute("icon", "visibility");
-                            else
-                                icon.setAttribute("icon", "visibility-off")
-
-                            components.innerHTML = '';
-
-                            for (var b = 0; b < page.Components.length; b++) {
-                                var component = page.Components[b],
-                                    viewComponent = document.createElement("article"),
-                                    headerSection = document.createElement("section"),
-                                    button = document.createElement("button");
-
-                                self.listen(viewComponent, "tap", "showEditComponent");
-                                viewComponent.setAttribute("tabindex", "0");
-                                viewComponent.setAttribute("data-id", component.Id);
-                                viewComponent.classList.add("component");
-                                viewComponent.classList.add("style-scope");
-                                viewComponent.classList.add("el-admin");
-
-                                headerSection.classList.add("layout");
-                                headerSection.classList.add("horizontal");
-                                headerSection.classList.add("center");
-                                headerSection.classList.add("style-scope");
-                                headerSection.classList.add("el-admin");
-
-                                self.listen(button, "tap", "deleteComponent");
-                                button.classList.add("style-scope");
-                                button.classList.add("el-admin");
-                                button.innerHTML = "<core-icon icon='close' class='style-scope el-admin'></core-icon>";
-
-                                headerSection.innerHTML += "<h3 class='flex style-scope el-admin'>" + component.Name + "</h3>";
-                                Polymer.dom(headerSection).appendChild(button);
-
-                                Polymer.dom(viewComponent).appendChild(headerSection);
-
-                                for (var c = 0; c < component.Properties.length; c++) {
-                                    var prop = component.Properties[c];
-
-                                    viewComponent.innerHTML += "<section class='property layout horizontal center style-scope el-admin'>" +
-                                        "<b class='flex style-scope el-admin'>" + prop.Name + "<b>" +
-                                        "<p class='style-scope el-admin'>" + prop.Value + "<p>" +
-                                    "</section>";
-                                }
-
-                                Polymer.dom(components).appendChild(viewComponent);
-                            }
-                        }
-                    })
                 }
                 else
-                    self.selectedView = "viewAddPage";
+                    self.selectedView = "viewAdd-Page";
             }
             else
                 console.error(response);
@@ -314,7 +283,7 @@ Polymer({
     deleteComponent: function (event) {
         var xhrDeleteComponent = document.createElement("core-request"),
             fd = new FormData(),
-            id = event.path[(event.path.length - 9)].getAttribute("data-id");
+            id = event.path[(event.path.length - 10)].getAttribute("data-id");
 
         fd.append("id", id);
 
@@ -332,10 +301,10 @@ Polymer({
         });
     },
     toggleAdd: function (event) {
-        if (this.$.options.getAttribute("hidden") == null)
-            this.$.options.setAttribute("hidden", "");
+        if (!this.$.options.hidden)
+            this.$.options.hidden = true;
         else
-            this.$.options.removeAttribute("hidden");
+            this.$.options.hidden = false;
     },
     showAddPage: function (event) {
         this.selectedView = "viewAdd-Page";
@@ -343,6 +312,7 @@ Polymer({
     showSelectComponent: function (event) {
         var select = Polymer.dom(this.$.viewSelectComponent).querySelector("select");
 
+        select.innerHTML = '';
         for (var i = 0; i < this.site.Components.length; i++) {
             var component = this.site.Components[i];
 
@@ -368,18 +338,28 @@ Polymer({
         });
     },
     showEditComponent: function (event) {
-        if (first)
+        if (first) {
+            var e = event;
             first = false;
+            window.setTimeout(function () {
+                if (!first) {
+                    if (e.target.tagName === "CORE-ICON")
+                        self.deleteComponent(e);
+
+                    first = true;
+                }
+            }, 750);
+        }
         else {
             var elComponent = document.createElement("el-component"),
-                componentId = event.path[(event.path.length - 9)].getAttribute("data-id"),
+                componentId = event.path[(event.path.length - 10)].getAttribute("data-id"),
                 page,
                 component;
 
             for (var i = 0; i < this.site.Pages.length; i++) {
                 var p = this.site.Pages[i];
 
-                if (p.Name == this.selectedView) {
+                if (p.Name == this.selectedView || this.lastView) {
                     page = p;
                     break;
                 }

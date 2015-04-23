@@ -147,27 +147,9 @@
                 <article id="viewComponent"
                          view="viewComponent"
                          class="layout vertical center">
-
                 </article>
 
-                <template is="x-repeat"
-                          items="[[site.Pages]]">
-
-                    <article view$="[[item.Name]]"
-                             class="page">
-
-                        <section class="layout horizontal center">
-                            <h2 class="flex">[[item.Name]]</h2>
-                            <button on-tap="togglePageVisibility">
-                                <core-icon icon="visibility" alt="toggle page visiblity"></core-icon>
-                            </button>
-                        </section>
-
-                        <section class="components layout horizontal wrap"></section>
-
-                    </article>
-
-                </template>
+                
 
             </core-selector>
 

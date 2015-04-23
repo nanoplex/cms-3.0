@@ -36,12 +36,5 @@ namespace cms.Models
                 p.Components = components.Result;
             });
         }
-
-        public async Task NewSite(string name)
-        {
-            ProjectName = name;
-
-            await DatabaseContext.Site.InsertOneAsync(this);
-        }
     }
 }

@@ -14,17 +14,21 @@ namespace cms.Controllers
         static Site _Site = new Site();
 
         [HttpGet]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public async Task<string> Site()
         {
             try
             {
-                _Site.GetSite();
+                await _Site.GetSite();
 
-                var json = JsonConvert.SerializeObject(_Site);
-
-                return json;
+                return JsonConvert.SerializeObject(_Site);
             }
-            catch (MongoDB.Driver.MongoException ex)
+            catch (MongoException ex)
             {
                 return JsonConvert.SerializeObject(ex.Message);
             }
@@ -42,7 +46,7 @@ namespace cms.Controllers
                 else
                     return "true";
             }
-            catch (MongoDB.Driver.MongoException ex)
+            catch (MongoException ex)
             {
                 return ex.Message;
             }
@@ -51,9 +55,19 @@ namespace cms.Controllers
         [HttpPost]
         public async Task<string> InitProject(string name)
         {
-            await _Site.NewSite(name);
+            try
+            {
+                _Site.ProjectName = name;
 
-            return "true";
+                await DatabaseContext.Site.InsertOneAsync(_Site);
+
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+
         }
 
         [HttpPost]
@@ -67,7 +81,7 @@ namespace cms.Controllers
 
                 if (page == null)
                 {
-                    Page.Add(name, (int)order);
+                    await Page.Add(name, (int)order);
 
                     return "true";
                 }
@@ -88,7 +102,7 @@ namespace cms.Controllers
             try
             {
                 var Id = ObjectId.Parse(id);
-                Page.Delete(Id);
+                await Page.Delete(Id);
 
                 return "true";
             }
@@ -108,8 +122,7 @@ namespace cms.Controllers
                 var page = _Site.Pages.Where(p => p.Id == Id).FirstOrDefault();
 
                 page.Visible = !page.Visible;
-
-                page.Edit();
+                await page.Edit();
 
                 return "true";
             }
@@ -126,10 +139,11 @@ namespace cms.Controllers
             {
                 var component = _Site.Components.Where(c => c.Name == name).FirstOrDefault();
                 var page = _Site.Pages.Where(p => p.Name == pageName).FirstOrDefault();
+                var props = JsonConvert.DeserializeObject<List<Property>>(properties);
 
-                Component.Add(
+                await Component.Add(
                     name,
-                    JsonConvert.DeserializeObject<List<Property>>(properties),
+                    props,
                     component.Frontend,
                     page.Id);
 
@@ -158,7 +172,7 @@ namespace cms.Controllers
 
                 component.Properties = JsonConvert.DeserializeObject<List<Property>>(properties);
 
-                component.Edit();
+                await component.Edit();
 
                 return "true";
             }
@@ -175,7 +189,7 @@ namespace cms.Controllers
             {
                 var Id = ObjectId.Parse(id);
 
-                Component.Delete(Id);
+                await Component.Delete(Id);
 
                 return "true";
             }
