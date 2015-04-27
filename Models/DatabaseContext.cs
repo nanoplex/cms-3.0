@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace cms.Models
 {
@@ -12,5 +13,6 @@ namespace cms.Models
         public static IMongoCollection<Site> Site = _Db.GetCollection<Site>("site");
         public static IMongoCollection<Page> Pages = _Db.GetCollection<Page>("pages");
         public static IMongoCollection<Component> Components = _Db.GetCollection<Component>("components");
+        public static IMongoCollection<PageView> Views = _Db.GetCollection<PageView>("views");
     }
 }

@@ -9,11 +9,21 @@
 
             <h1 class="flex">[[site.ProjectName]]</h1>
 
-            <button>
-                <core-icon icon="more-vert"
-                           alt="options">
+            <button on-tap="toggleMore">
+                <core-icon icon="more-vert" alt="options">
                 </core-icon>
             </button>
+
+            <section id="more" hidden>
+                <button class="layout horizontal center" on-tap="showStatistics">
+                    <core-icon class="flex" icon="social:poll"></core-icon>
+                    <p>statistics</p>
+                </button>
+                <button class="layout horizontal center" on-tap="showSettings">
+                    <core-icon class="flex" icon="settings"></core-icon>
+                    <p>settings</p>
+                </button>
+            </section>
 
         </header>
 
@@ -31,11 +41,8 @@
 
                         <button data-id$="[[item.Id]]"
                                 on-tap="deletePage">
-
-                            <core-icon icon="close"
-                                       alt="delete page">
+                            <core-icon icon="close" alt="delete page">
                             </core-icon>
-
                         </button>
 
                     </section>
@@ -70,11 +77,8 @@
 
                     <button on-tap="initProject"
                             class="self-end">
-
-                        <core-icon icon="check"
-                                   alt="done">
+                        <core-icon icon="check" alt="done">
                         </core-icon>
-
                     </button>
                 </article>
 
@@ -91,11 +95,8 @@
                         <h2 class="flex">add page</h2>
 
                         <button on-tap="home">
-
-                            <core-icon icon="close"
-                                       alt="close">
+                            <core-icon icon="close" alt="close">
                             </core-icon>
-
                         </button>
 
                     </section>
@@ -112,8 +113,7 @@
                         <p class="status flex"></p>
 
                         <button on-tap="addPage">
-                            <core-icon icon="check"
-                                       alt="done">
+                            <core-icon icon="check" alt="done">
                             </core-icon>
                         </button>
 
@@ -127,7 +127,8 @@
                     <section class="layout horizontal center">
                         <h2>select component type</h2>
                         <button on-tap="home">
-                            <core-icon icon="close" alt="close"></core-icon>
+                            <core-icon icon="close" alt="close">
+                            </core-icon>
                         </button>
                     </section>
 
@@ -135,21 +136,32 @@
 
                     <button on-tap="showAddComponent"
                             class="self-end">
-
-                        <core-icon icon="check"
-                                   alt="add component">
-                        </core-icon>
-
+                        <core-icon icon="check" alt="add component"></core-icon>
                     </button>
 
                 </article>
 
                 <article id="viewComponent"
                          view="viewComponent"
-                         class="layout vertical center">
-                </article>
+                         class="layout vertical center"></article>
 
-                
+                <article id="viewStatistics"
+                         view="viewStatistics">
+                    <section id="statsOff" class="layout horizontal center" hidden>
+                        <p>turn statistics on</p>
+                        <button on-tap="toggleStatistics">
+                            <core-icon icon="radio-button-off"></core-icon>
+                        </button>
+                    </section>
+                    <section id="statsOn" hidden>
+                        <section class="layout horizontal center">
+                            <p>turn statistics off</p>
+                            <button on-tap="toggleStatistics">
+                                <core-icon icon="radio-button-on"></core-icon>
+                            </button>
+                        </section>
+                    </section>
+                </article>
 
             </core-selector>
 
@@ -162,13 +174,13 @@
             <section id="options"
                      class="layout vertical end"
                      hidden>
+
                 <button on-tap="showAddPage"
                         class="layout horizontal center">
 
                     <p>page</p>
 
-                    <core-icon icon="note-add"
-                               alt="add page">
+                    <core-icon icon="note-add" alt="add page">
                     </core-icon>
 
                 </button>
@@ -178,8 +190,7 @@
 
                     <p>component</p>
 
-                    <core-icon icon="extension"
-                               alt="add component">
+                    <core-icon icon="extension" alt="add component">
                     </core-icon>
 
                 </button>
@@ -187,11 +198,8 @@
             </section>
 
             <button on-tap="toggleAdd">
-
-                <core-icon icon="add"
-                           alt="add">
+                <core-icon icon="add" alt="add">
                 </core-icon>
-
             </button>
 
         </section>

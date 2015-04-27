@@ -65,6 +65,33 @@ header {
         margin: 0;
     }
 
+#more {
+    position: absolute;
+    padding: .5em;
+    top: 2.5em;
+    right: 2.5em;
+    border: 1px solid;
+    background-color: white;
+    z-index: 2;
+}
+
+    #more button {
+        margin: 0;
+        padding: 0;
+    }
+
+        #more button core-icon {
+            margin-right: 1em;
+        }
+
+        #more button:hover, #more button:focus {
+            background: none;
+        }
+
+            #more button:hover p {
+                text-decoration: underline;
+            }
+
 nav {
     width: 270px;
     border-right: 1px solid;

@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace cms.Controllers
 {
@@ -18,7 +19,6 @@ namespace cms.Controllers
         {
             return View();
         }
-
         [HttpGet]
         public async Task<string> Site()
         {
@@ -30,10 +30,9 @@ namespace cms.Controllers
             }
             catch (MongoException ex)
             {
-                return JsonConvert.SerializeObject(ex.Message);
+                return ex.Message;
             }
         }
-
         [HttpGet]
         public async Task<string> Auth()
         {
@@ -51,13 +50,30 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
+        [HttpPost]
+        public async Task<string> ToggleStatistics()
+        {
+            try
+            {
+                await DatabaseContext.Site.UpdateOneAsync(
+                    s => s.Id == _Site.Id,
+                    Builders<Site>.Update
+                        .Set(s => s.StatisticsOn, !_Site.StatisticsOn));
 
+                return "true";
+            }
+            catch (MongoException ex)
+            {
+                return ex.Message;
+            }
+        }
         [HttpPost]
         public async Task<string> InitProject(string name)
         {
             try
             {
                 _Site.ProjectName = name;
+                _Site.StatisticsOn = false;
 
                 await DatabaseContext.Site.InsertOneAsync(_Site);
 
@@ -69,7 +85,6 @@ namespace cms.Controllers
             }
 
         }
-
         [HttpPost]
         public async Task<string> AddPage(string name, int? order)
         {
@@ -79,9 +94,17 @@ namespace cms.Controllers
                     Builders<Page>.Filter.Eq(p => p.Name, name))
                     .SingleOrDefaultAsync();
 
+                var id = ObjectId.GenerateNewId(DateTime.Now);
+
                 if (page == null)
                 {
-                    await Page.Add(name, (int)order);
+                    await DatabaseContext.Pages.InsertOneAsync(new Page
+                    {
+                        Id = id,
+                        Name = name,
+                        Visible = true,
+                        Order = (int)order
+                    });
 
                     return "true";
                 }
@@ -95,14 +118,15 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
-
         [HttpPost]
         public async Task<string> DeletePage(string id)
         {
             try
             {
                 var Id = ObjectId.Parse(id);
-                await Page.Delete(Id);
+
+                await DatabaseContext.Pages.DeleteOneAsync(
+                    p => p.Id == Id);
 
                 return "true";
             }
@@ -111,17 +135,15 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
-
         [HttpPost]
         public async Task<string> TogglePageVisibility(string id)
         {
             try
             {
-                var Id = ObjectId.Parse(id);
-
-                var page = _Site.Pages.Where(p => p.Id == Id).FirstOrDefault();
+                var page = _Site.Pages.Where(p => p.Id == ObjectId.Parse(id)).FirstOrDefault();
 
                 page.Visible = !page.Visible;
+
                 await page.Edit();
 
                 return "true";
@@ -131,7 +153,6 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
-
         [HttpPost]
         public async Task<string> AddComponent(string name, string properties, string pageName)
         {
@@ -141,11 +162,13 @@ namespace cms.Controllers
                 var page = _Site.Pages.Where(p => p.Name == pageName).FirstOrDefault();
                 var props = JsonConvert.DeserializeObject<List<Property>>(properties);
 
-                await Component.Add(
-                    name,
-                    props,
-                    component.Frontend,
-                    page.Id);
+                await DatabaseContext.Components.InsertOneAsync(new Component
+                {
+                    Name = name,
+                    Properties = props,
+                    Frontend = component.Frontend,
+                    PageFk = page.Id
+                });
 
                 return "true";
             }
@@ -154,25 +177,26 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
-
         [HttpPost]
         public async Task<string> EditComponent(string id, string properties)
         {
             try
             {
-                var Id = ObjectId.Parse(id);
-                Component component = new Component();
+                var component = new Component();
 
                 foreach (var page in _Site.Pages)
                 {
-                    component = page.Components.Where(c => c.Id == Id).FirstOrDefault();
+                    component = page.Components.Where(c => c.Id == ObjectId.Parse(id)).FirstOrDefault();
                     if (component != null)
                         break;
                 }
 
                 component.Properties = JsonConvert.DeserializeObject<List<Property>>(properties);
 
-                await component.Edit();
+                await DatabaseContext.Components.UpdateOneAsync(
+                    c => c.Id == component.Id,
+                    Builders<Component>.Update
+                        .Set(c => c.Properties, component.Properties));
 
                 return "true";
             }
@@ -181,7 +205,6 @@ namespace cms.Controllers
                 return ex.Message;
             }
         }
-
         [HttpPost]
         public async Task<string> DeleteComponent(string id)
         {
@@ -189,7 +212,8 @@ namespace cms.Controllers
             {
                 var Id = ObjectId.Parse(id);
 
-                await Component.Delete(Id);
+                await DatabaseContext.Components.DeleteOneAsync<Component>(
+                    c => c.Id == Id);
 
                 return "true";
             }

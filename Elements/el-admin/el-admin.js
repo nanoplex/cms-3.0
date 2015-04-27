@@ -113,6 +113,11 @@ Polymer({
                     }
 
                     self.$.nav.hidden = false;
+                    
+                    if (self.site.StatisticsOn)
+                        self.$.statsOn.hidden = false;
+                    else
+                        self.$.statsOff.hidden = false;
 
                     if (self.lastView !== undefined)
                         self.selectedView = self.lastView;
@@ -135,7 +140,7 @@ Polymer({
 
         document.querySelector("title").innerHTML = newVal.replace(/^view/, '').replace(/-/, ' ') + " - admin";
 
-        // does not get pages first time if timeout is not set
+        // pages are not defined if timeout is not set
         window.setTimeout(function () {
             var pages = Polymer.dom(self.$.nav).querySelectorAll("section");
 
@@ -180,6 +185,20 @@ Polymer({
             }
         }).catch(function (why) {
             console.error(why);
+        });
+    },
+    toggleStatistics: function(event) {
+        var xhr = document.createElement("core-request");
+
+        xhr.send({
+            url: "/admin/toggleStatistics",
+            method: "POST"
+        });
+
+        xhr.completes.then(function (response) {
+            self.ready();
+        }).catch(function (why) {
+            console.error(why)
         });
     },
     addPage: function (event) {
@@ -306,6 +325,12 @@ Polymer({
         else
             this.$.options.hidden = false;
     },
+    toggleMore: function (event) {
+        if (this.$.more.hidden)
+            this.$.more.hidden = false;
+        else
+            this.$.more.hidden = true;
+    },
     showAddPage: function (event) {
         this.selectedView = "viewAdd-Page";
     },
@@ -387,5 +412,9 @@ Polymer({
 
             first = true;
         }
+    },
+    showStatistics: function (event) {
+        this.selectedView = "viewStatistics";
+        this.toggleMore();
     }
 });

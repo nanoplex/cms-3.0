@@ -12,14 +12,8 @@ namespace cms.Models
         public bool Visible { get; set; }
         public int Order { get; set; }
         public List<Component> Components { get; set; }
+        public List<PageView> Views { get; set; }
 
-        public static async Task Add(string name, int order)
-        {
-            var page = new Page { Name = name, Visible = true, Order = order };
-
-            await DatabaseContext.Pages.InsertOneAsync(page);
-        }
-        
         public async Task Edit()
         {
             await DatabaseContext.Pages.UpdateOneAsync<Page>(
@@ -27,12 +21,6 @@ namespace cms.Models
                 Builders<Page>.Update
                     .Set(p => p.Visible, Visible)
                     .Set(p => p.Order, Order));
-        }
-
-        public static async Task Delete(ObjectId id)
-        {
-            await DatabaseContext.Pages.DeleteOneAsync(
-                p => p.Id ==  id);
         }
     }
 }
