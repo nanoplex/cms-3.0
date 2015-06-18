@@ -1,0 +1,11 @@
+﻿{
+  "test": {
+    "type": "string"
+  },
+  "test1": {
+    "type": "object",
+    "value": {
+      "test": "test"
+    }
+  }
+}

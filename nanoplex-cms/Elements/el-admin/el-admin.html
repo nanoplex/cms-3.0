@@ -1,0 +1,61 @@
+﻿<dom-module id="el-admin">
+    <link rel="stylesheet" href="el-admin.css" />
+    <style>
+        :host > article {
+            width: 100%;
+        }
+    </style>
+    <template>
+        <admin-nav pages="[[pages]]" selected-page="{{selectedPage.Name}}" class="layout vertical center"></admin-nav>
+
+        <article class="layout vertical flex">
+            <header class="layout horizontal center">
+                <img src="http://nanoplex.dk/logo.svg" alt="nanoplex logo" />
+                <h2 class="flex">nanoplex cms</h2>
+                <button class="btn">
+                    <iron-icon icon="settings" alt="settings"></iron-icon>
+                </button>
+            </header>
+            <admin-components components="{{selectedPage.Components}}"></admin-components>
+        </article>
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "el-admin",
+        properties: {
+            pages: Array,
+            selectedPage: Object
+        },
+        ready: function () {
+            this.getPages();
+        },
+        getPages: function () {
+            var that = this;
+
+            request("/admin/pages").json(function (pages) {
+                that.pages = pages;
+
+                that.selectedPage = that.getSelectedPage(that.pages);
+            });
+
+            addEventListener("hashChange", function () {
+                that.selectedPage = that.getSelectedPage(that.pages);
+            });
+        },
+        getSelectedPage: function (pages) {
+            var pageName = window.location.hash.replace(/#\/page\//, ""),
+                page;
+
+            for (var i = 0, len = pages.length; i < len; i++) {
+                page = pages[i];
+                if (page.Name === pageName) {
+                    return page;
+                }
+            }
+        },
+        setSelectedPage: function (index) {
+            this.selctedPage = this.pages[index];
+        }
+    });
+</script>

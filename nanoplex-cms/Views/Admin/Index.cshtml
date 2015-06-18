@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Admin";
+}
+
+<style>
+    html > /**/ body * {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        border-color: #212121 !important;
+    }
+
+    body {
+        font-family: Roboto;
+        margin: 0;
+        overflow: hidden;
+        max-width: 100vw;
+        min-width: 100vw;
+        max-height: 100vh;
+        min-height: 100vh;
+    }
+
+    el-admin {
+        max-width: 100vw;
+        min-width: 100vw;
+        max-height: 100vh;
+        min-height: 100vh;
+    }
+
+    .btn {
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: .75em;
+        margin: 0;
+        border-radius: 50%;
+        -moz-transition: .3s background;
+        -o-transition: .3s background;
+        -webkit-transition: .3s background;
+        transition: .3s background;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background:rgba(0,0,0,.15);
+    }
+
+    .small {
+        padding: .5em;
+    }
+
+    .small iron-icon {
+        width: 15px;
+        height: 15px;
+    }
+</style>
+
+<link rel="import" href="~/imports.html"/>
+
+<el-admin class="layout horizontal"></el-admin>

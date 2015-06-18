@@ -1,0 +1,30 @@
+{
+  "name": "nanoplex-cms",
+  "version": "0.0.1",
+  "authors": [
+    "Mathias Hansen <mathias.hansen783@gmail.com>"
+  ],
+  "description": "nanoplex cms",
+  "keywords": [
+    "nanoplex",
+    "cms"
+  ],
+  "license": "MIT",
+  "homepage": "cms.nanoplex.dk",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#1.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#1.0.0",
+    "iron-icon": "PolymerElements/iron-icon#1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#1.0.0",
+    "paper-input": "PolymerElements/paper-input#1.0.0",
+    "paper-material": "PolymerElements/paper-material#1.0.0",
+    "paper-dialog": "PolymerElements/paper-dialog#1.0.0"
+  }
+}
