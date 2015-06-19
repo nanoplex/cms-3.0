@@ -1,12 +1,24 @@
 ﻿<dom-module id="admin-nav">
+
     <style>
-        .selected {
-            background: #2196F3;
+        :host > section iron-icon {
+            fill: white !important;
         }
 
-            .selected p {
-                color: white;
-            }
+        :host {
+            border-right: 1px solid;
+        }
+
+        paper-input {
+            margin: -10.5px 0;
+            --paper-input-container-input-color: #212121;
+            --paper-input-container-color: #212121;
+            --paper-input-container-focus-color: #212121;
+        }
+
+        .selected {
+            background: #9E9E9E;
+        }
 
         nav {
             border-top: 1px solid;
@@ -92,37 +104,12 @@
             background: #616161;
         }
 
-        :host > section iron-icon {
-            fill: white !important;
-        }
-
-        .page.selected iron-icon {
-            fill: white;
-        }
-
         .btn iron-icon {
             fill: black;
         }
 
         .btn:hover {
             background: transparent;
-        }
-
-        :host {
-            border-right: 1px solid;
-        }
-
-        paper-input {
-            margin: -10.5px 0;
-            --paper-input-container-input-color: #212121;
-            --paper-input-container-color: #212121;
-            --paper-input-container-focus-color: #212121;
-        }
-
-        .selected paper-input {
-            --paper-input-container-input-color: white;
-            --paper-input-container-color: white;
-            --paper-input-container-focus-color: white;
         }
 
         paper-material {
@@ -147,51 +134,125 @@
         #addPage paper-input {
             margin-bottom: 1em;
         }
+
+        p {
+            cursor: pointer;
+        }
     </style>
+
     <template>
+
         <nav class="flex">
-            <template is="dom-repeat" items="{{pages}}">
-                <div index$="{{index}}" class="page layout horizontal center">
-                    <article class="layout vertical center" hidden$="{{!editMode}}">
+
+            <template is="dom-repeat"
+                      items="{{pages}}">
+
+                <div index$="{{index}}"
+                     class="page layout horizontal center">
+
+                    <article class="layout vertical center"
+                             hidden$="{{!editMode}}">
+
                         <button class="btn small">
-                            <iron-icon icon="expand-less" alt="up"></iron-icon>
+
+                            <iron-icon icon="expand-less" alt="up">
+                            </iron-icon>
+
                         </button>
+
                         <button class="btn small">
-                            <iron-icon icon="expand-more" alt="down"></iron-icon>
+                            <iron-icon icon="expand-more" alt="down">
+                            </iron-icon>
                         </button>
+
                     </article>
+
                     <article class="name flex">
+
                         <p on-tap="changePage" hidden$="{{editMode}}">{{item.Name}}</p>
-                        <paper-input label="page name" type="text" value$="[[item.Name]]" on-input="updatePageName" no-label-float hidden$="{{!editMode}}"></paper-input>
+
+                        <paper-input label="page name"
+                                     type="text"
+                                     value$="[[item.Name]]"
+                                     on-input="updatePageName"
+                                     no-label-float hidden$="{{!editMode}}">
+                        </paper-input>
+
                     </article>
-                    <button on-tap="deletePage" class="btn small" hidden$="{{!editMode}}">
-                        <iron-icon icon="close"></iron-icon>
+
+                    <button on-tap="deletePage"
+                            class="btn small"
+                            hidden$="{{!editMode}}">
+
+                        <iron-icon icon="close">
+                        </iron-icon>
+
                     </button>
                 </div>
+
             </template>
+
         </nav>
+
         <section class="layout horizontal center justified">
-            <button on-tap="toggleEditmode" class="btn small">
-                <iron-icon icon="create" alt="edit"></iron-icon>
+
+            <button on-tap="toggleEditmode"
+                    class="btn small">
+
+                <iron-icon icon="create" alt="edit">
+                </iron-icon>
+
             </button>
-            <button on-tap="openAddPage" class="btn small">
-                <iron-icon icon="add" alt="add"></iron-icon>
+
+            <button on-tap="openAddPage"
+                    class="btn small">
+
+                <iron-icon icon="add" alt="add">
+                </iron-icon>
+
             </button>
+
         </section>
-        <div id="addPage" class="layout vertical center fit" hidden>
+
+        <div id="addPage"
+             class="layout vertical center fit"
+             hidden>
+
             <paper-material class="layout vertical">
+
                 <article class="layout horizontal center">
+
                     <h2 class="flex">Add page</h2>
-                    <button on-tap="closeAddPage" class="btn">
-                        <iron-icon icon="close"></iron-icon>
+
+                    <button on-tap="closeAddPage"
+                            class="btn">
+
+                        <iron-icon icon="close">
+                        </iron-icon>
+
                     </button>
+
                 </article>
-                <paper-input label="page name" on-input="validatePageName"></paper-input>
-                <button on-tap="addPage" class="btn self-end">
-                    <iron-icon icon="done" alt="add page"></iron-icon>
+
+                <paper-input label="page name"
+                             on-input="validatePageName">
+                </paper-input>
+
+                <button on-tap="addPage"
+                        class="btn self-end">
+
+                    <iron-icon icon="done"
+                               alt="add page">
+                    </iron-icon>
+
                 </button>
+
             </paper-material>
+
         </div>
+
     </template>
+
 </dom-module>
+
 <script src="admin-nav.js"></script>

@@ -1,0 +1,71 @@
+﻿<dom-module id="admin-components">
+    <style>
+
+        .selected {
+            background: #9E9E9E;
+        }
+
+        section {
+            padding: .75em;
+            border-bottom: 1px solid;
+        }
+
+        section p {
+            margin: 0;
+        }
+
+        .btn {
+            padding: 0;
+        }
+    </style>
+    <template>
+
+        <template is="dom-repeat" items="{{components}}">
+
+            <section on-tap="openComponent" index$="{{index}}" class="layout horizontal center">
+
+                <p class="flex">{{item.Name}}</p>
+
+                <button class="btn">
+                    <iron-icon icon="close" alt="">
+                    </iron-icon>
+                </button>
+
+            </section>
+
+        </template>
+
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: "admin-components",
+        properties: {
+            components: Object
+        },
+        attached: function () {
+            console.log(this.components);
+        },
+        openComponent: function (event) {
+            var i = event.target,
+                hash = window.location.hash,
+                component,
+                view = this.parentNode.querySelector("component-view");
+
+            while (i.nodeName !== "SECTION") {
+                i = i.parentNode;
+            }
+
+            i = i.attributes["index"].value;
+
+            console.log(i);
+
+            component = this.components[i];
+
+            view.name = component.Name;
+            view.properties = component.Properties;
+
+            window.location.hash = "#/component/" + hash.match(/\w+$/)[0];
+        }
+    });
+</script>

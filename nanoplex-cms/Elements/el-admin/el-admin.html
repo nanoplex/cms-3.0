@@ -1,25 +1,70 @@
 ﻿<dom-module id="el-admin">
-    <link rel="stylesheet" href="el-admin.css" />
+
     <style>
         :host > article {
             width: 100%;
         }
+
+        header {
+            width: 100%;
+            padding: .25em .5em;
+            border-bottom: 1px solid;
+        }
+
+            header img {
+                width: 3em;
+                margin-right: .5em;
+            }
+
+            header h2 {
+                margin: 0;
+            }
+
+        admin-nav {
+            min-height: 100%;
+            max-height: 100%;
+            width: 200px;
+        }
     </style>
+
     <template>
-        <admin-nav pages="[[pages]]" selected-page="{{selectedPage.Name}}" class="layout vertical center"></admin-nav>
+
+        <admin-nav pages="[[pages]]"
+                   selected-page="{{selectedPage.Name}}"
+                   class="layout vertical center">
+        </admin-nav>
 
         <article class="layout vertical flex">
+
             <header class="layout horizontal center">
-                <img src="http://nanoplex.dk/logo.svg" alt="nanoplex logo" />
+
+                <img src="http://nanoplex.dk/logo.svg"
+                     alt="nanoplex logo" />
+
                 <h2 class="flex">nanoplex cms</h2>
+
                 <button class="btn">
-                    <iron-icon icon="settings" alt="settings"></iron-icon>
+
+                    <iron-icon icon="settings"
+                               alt="settings">
+                    </iron-icon>
+
                 </button>
+
             </header>
-            <admin-components components="{{selectedPage.Components}}"></admin-components>
+
+            <admin-components class="layout vertical"
+                              components="{{selectedPage.Components}}">
+            </admin-components>
+
+            <component-view></component-view>
+
         </article>
+
     </template>
+
 </dom-module>
+
 <script>
     Polymer({
         is: "el-admin",
@@ -35,6 +80,26 @@
             this.querySelector("admin-nav").addEventListener("pages-changed", function () {
                 that.getPages();
             });
+
+            addEventListener("hashchange", function () {
+                var hash = window.location.hash,
+                    location = hash.match(/(?!#\/)\w+/)[0],
+                    components = that.querySelector("admin-components"),
+                    view = that.querySelector("component-view");
+
+                components.hidden = true;
+                view.hidden = true;
+
+                if (location === "page") {
+                    that.selectedPage = that.getSelectedPage(that.pages);
+
+                    components.hidden = false;
+                } else if (location === "component") {
+                    view.hidden = false;
+                }
+
+
+            });
         },
         getPages: function () {
             var that = this;
@@ -42,10 +107,6 @@
             request("/admin/pages").json(function (pages) {
                 that.pages = pages;
 
-                that.selectedPage = that.getSelectedPage(that.pages);
-            });
-
-            addEventListener("hashchange", function () {
                 that.selectedPage = that.getSelectedPage(that.pages);
             });
         },

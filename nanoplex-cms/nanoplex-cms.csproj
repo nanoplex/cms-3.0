@@ -129,9 +129,10 @@
     <Content Include="bower_components\webcomponentsjs\webcomponents-lite.min.js" />
     <Content Include="bower_components\webcomponentsjs\webcomponents.js" />
     <Content Include="bower_components\webcomponentsjs\webcomponents.min.js" />
+    <Content Include="Elements\admin-components\admin-components.html" />
     <Content Include="Elements\admin-nav\admin-nav.html" />
     <Content Include="Elements\admin-nav\admin-nav.js" />
-    <Content Include="Elements\el-admin\el-admin.css" />
+    <Content Include="Elements\component-view\component-view.html" />
     <Content Include="Elements\el-admin\el-admin.html" />
     <Content Include="Components\test-element\test-element.html" />
     <Content Include="Global.asax" />
