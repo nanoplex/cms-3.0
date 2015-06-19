@@ -2,9 +2,8 @@
     is: "admin-nav",
     properties: {
         pages: Array,
-        newPageName: String,
         selectedPage: {
-            type: String,
+            type: "string",
             observer: "updateSelectedPage"
         },
         editMode: {
@@ -17,8 +16,6 @@
 
         setTimeout(function () {
             var pages = that.querySelectorAll(".page");
-
-            console.log(newVal, that.pages, pages);
 
             for (var i = 0, length = that.pages.length; i < length; i++) {
                 if (that.pages[i].Name === newVal) {
@@ -51,8 +48,9 @@
         });
     },
     deletePage: function (event) {
-        var pageEl = this.getButtonElement(event.target).parentNode;
-        i, page;
+        var that = this,
+            pageEl = this.getButtonElement(event.target).parentNode,
+            i, page;
 
         i = parseInt(pageEl.attributes["index"].value);
         page = this.pages[i];
@@ -70,5 +68,47 @@
     },
     toggleEditmode: function (event) {
         this.editMode = !this.editMode;
+    },
+    openAddPage: function () {
+        this.querySelector("#addPage").hidden = false;
+    },
+    closeAddPage: function () {
+        this.querySelector("#addPage").hidden = true;
+    },
+    addPage: function () {
+        var that = this,
+            addPage = this.querySelector("#addPage"),
+            input = addPage.querySelector("paper-input"),
+            value = input.value,
+            valid = !input.invalid;
+
+        if (valid) {
+            request("/admin/pageAdd/" + value).send().then(function () {
+                that.fire("pages-changed");
+                that.closeAddPage();
+            });
+        }
+    },
+    validatePageName: function (event) {
+        var input = event.target,
+            value = input.value;
+
+        if (value === "") {
+            input.invalid = true;
+            return;
+        }
+
+        for (var i = 0, length = this.pages.length; i < length; i++) {
+            if (this.pages[i].Name === value) {
+                input.invalid = true;
+                return;
+            }
+        }
+
+        input.invalid = false;
+    },
+    changePage: function (event) {
+        var name = event.target.innerHTML;
+        window.location.hash = "#/page/" + name;
     }
 });

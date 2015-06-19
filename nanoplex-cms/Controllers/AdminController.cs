@@ -76,15 +76,18 @@ namespace nanoplex_cms.Controllers
         }
 
         [HttpPost]
-        public async Task PageDelte(string id)
+        public async Task PageDelete(string id)
         {
-
+            await DatabaseContext.Pages.DeleteOneAsync(Builders<Page>.Filter.Eq(p => p.Name, id));
         }
 
         [HttpPost]
         public async Task PageAdd(string id)
         {
+            var newOrder = DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Exists(p => p.Order, true));
+            newOrder.Wait();
 
+            await DatabaseContext.Pages.InsertOneAsync(new Page { Name = id, Visible = true });
         }
     }
 }

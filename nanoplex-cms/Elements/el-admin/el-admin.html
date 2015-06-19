@@ -28,7 +28,13 @@
             selectedPage: Object
         },
         ready: function () {
+            var that = this;
+
             this.getPages();
+
+            this.querySelector("admin-nav").addEventListener("pages-changed", function () {
+                that.getPages();
+            });
         },
         getPages: function () {
             var that = this;
@@ -39,7 +45,7 @@
                 that.selectedPage = that.getSelectedPage(that.pages);
             });
 
-            addEventListener("hashChange", function () {
+            addEventListener("hashchange", function () {
                 that.selectedPage = that.getSelectedPage(that.pages);
             });
         },

@@ -16,7 +16,7 @@ namespace nanoplex_cms.Controllers
         [HttpGet]
         public async Task<string> Page(string id)
         {
-            var query = await DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Eq("Name", id));
+            var query = await DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Eq(p => p.Name, id));
 
             var pages = await query.ToListAsync();
 
