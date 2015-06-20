@@ -54,10 +54,17 @@
             </header>
 
             <admin-components class="layout vertical"
-                              components="{{selectedPage.Components}}">
+                              components="{{selectedPage.Components}}"
+                              component-types="[[componentTypes]]"
+                              selected-page-name="[[selectedPage.Name]]">
             </admin-components>
 
-            <component-view></component-view>
+            <component-view name="[[selectedComponent.Name]]"
+                            properties="{{selectedComponent.Properties}}"
+                            page-name="[[selectedPage.Name]]"
+                            class="layout vertical center flex"
+                            hidden>
+            </component-view>
 
         </article>
 
@@ -66,26 +73,49 @@
 </dom-module>
 
 <script>
+
     Polymer({
         is: "el-admin",
         properties: {
-            pages: Array,
-            selectedPage: Object
+            pages: {
+                type: Array,
+                observer: "pagesChanged"
+            },
+            componentTypes: Array,
+            selectedPage: Object,
+            selectedComponent: Object
         },
-        ready: function () {
+        attached: function () {
             var that = this;
 
-            this.getPages();
+            this.getPages(function () {
+                that.selectedPage = that.getSelectedPage(that.pages);
+            });
+
+            this.getCompoentTypes();
 
             this.querySelector("admin-nav").addEventListener("pages-changed", function () {
-                that.getPages();
+                that.getPages(function () {
+                    that.selectedPage = that.getSelectedPage(that.pages);
+                });
+            });
+            this.querySelector("admin-components").addEventListener("pages-changed", function () {
+                that.getPages(function () {
+                    var components = that.getSelectedPage(that.pages).Components;
+
+                    that.set("selectedPage.Components", components);
+                });
             });
 
             addEventListener("hashchange", function () {
                 var hash = window.location.hash,
-                    location = hash.match(/(?!#\/)\w+/)[0],
+                    location = hash.match(/(?!#\/)\w+/),
                     components = that.querySelector("admin-components"),
                     view = that.querySelector("component-view");
+
+                if (location) {
+                    location = location[0];
+                }
 
                 components.hidden = true;
                 view.hidden = true;
@@ -94,20 +124,39 @@
                     that.selectedPage = that.getSelectedPage(that.pages);
 
                     components.hidden = false;
-                } else if (location === "component") {
+                } else if (location === "component" && that.selectedPage) {
+                    var i = parseInt(hash.match(/\w+$/)[0]);
+
+                    that.selectedComponent = that.selectedPage.Components[i];
+
                     view.hidden = false;
                 }
-
-
             });
         },
-        getPages: function () {
-            var that = this;
+        pagesChanged: function (newVal) {
+            var hash = window.location.hash;
 
-            request("/admin/pages").json(function (pages) {
+            if (hash.match(/(?!#\/)page\//) === null && newVal.length > 0) {
+                window.location.hash = "#/page/" + newVal[0].Name;
+            }
+        },
+        getPages: function (callback) {
+            var that = this,
+                selectedPage = this.selectedPage;
+
+            request("/page/all").json(function (pages) {
                 that.pages = pages;
 
-                that.selectedPage = that.getSelectedPage(that.pages);
+                if (typeof callback === "function") {
+                    callback();
+                }
+            });
+        },
+        getCompoentTypes: function () {
+            var that = this;
+
+            request("/component/types").json(function (types) {
+                that.componentTypes = types;
             });
         },
         getSelectedPage: function (pages) {

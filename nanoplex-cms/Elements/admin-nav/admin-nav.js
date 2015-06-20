@@ -39,13 +39,18 @@
                 value: value
             };
 
-        request("/admin/pageName").send(JSON.stringify(send)).then(function () {
-            paperInput.previousElementSibling.innerHTML = value;
+        this.validatePageName(event);
 
-            if (pageEl.classList.contains("selected")) {
-                window.location.hash = "#/page/" + value;
-            }
-        });
+        if (!input.invalid) {
+            request("/page/newName").send(JSON.stringify(send)).then(function () {
+                paperInput.previousElementSibling.innerHTML = value;
+
+                if (pageEl.classList.contains("selected")) {
+                    window.location.hash = "#/page/" + value;
+                }
+            });
+        }
+
     },
     deletePage: function (event) {
         var that = this,
@@ -55,7 +60,7 @@
         i = parseInt(pageEl.attributes["index"].value);
         page = this.pages[i];
 
-        request("/admin/pageDelete/" + page.Name).send().then(function () {
+        request("/page/delete/" + page.Name).send().then(function () {
             pageEl.hidden = true;
         });
     },
@@ -83,7 +88,7 @@
             valid = !input.invalid;
 
         if (valid) {
-            request("/admin/pageAdd/" + value).send().then(function () {
+            request("/page/add/" + value).send().then(function () {
                 that.fire("pages-changed");
                 that.closeAddPage();
             });
@@ -101,14 +106,15 @@
         for (var i = 0, length = this.pages.length; i < length; i++) {
             if (this.pages[i].Name === value) {
                 input.invalid = true;
-                return;
+                return true;
             }
         }
 
         input.invalid = false;
+        return false;
     },
     changePage: function (event) {
         var name = event.target.innerHTML;
-        window.location.hash = "#/page/" + name;
+        window.location.hash = "/page/" + name;
     }
 });

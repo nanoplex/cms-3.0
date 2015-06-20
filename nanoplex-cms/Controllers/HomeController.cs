@@ -12,22 +12,5 @@ namespace nanoplex_cms.Controllers
         {
             return View();
         }
-
-        [HttpGet]
-        public async Task<string> Page(string id)
-        {
-            var query = await DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Eq(p => p.Name, id));
-
-            var pages = await query.ToListAsync();
-
-            if (pages.Count > 0)
-            {
-                return pages[0].toHTML();
-            }
-            else
-            {
-                return "error";
-            }
-        }
     }
 }

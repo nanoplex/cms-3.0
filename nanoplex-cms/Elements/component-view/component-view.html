@@ -1,13 +1,81 @@
 ﻿<dom-module id="component-view">
-    <style></style>
-    <template></template>
+    <style>
+        paper-material {
+            width: 100%;
+            max-width: 700px;
+            margin: 2em .5em 1em .5em;
+            padding: 1em;
+        }
+
+        #components {
+            overflow-y: auto;
+        }
+    </style>
+    <template>
+        <paper-material class="layout vertical flex">
+            <article class="layout horizontal center">
+
+                <h2 class="flex">[[name]]</h2>
+
+                <button class="btn"
+                        on-tap="goBack">
+
+                    <iron-icon icon="arrow-back">
+                    </iron-icon>
+
+                </button>
+
+            </article>
+
+            <section id="components" class="flex">
+                <template is="dom-repeat"
+                          items="{{properties}}">
+
+                    <component-property name="[[item.Name]]"
+                                        type="[[item.Type]]"
+                                        value="{{item.Value::changed}}">
+                    </component-property>
+
+                </template>
+            </section>
+
+            <button on-tap="saveComponent" class="btn self-end">
+                <iron-icon icon="done">
+                </iron-icon>
+            </button>
+        </paper-material>
+    </template>
 </dom-module>
 <script>
     Polymer({
         is: "component-view",
         properties: {
+            pageName: String,
             name: String,
-            properties: Object
+            properties: {
+                type: Array,
+                notyfi: true
+            }
+        },
+        attached: function () {
+            this.properties;
+        },
+        goBack: function () {
+            window.history.back();
+        },
+        saveComponent: function () {
+            var that = this;
+
+            request("/component/update").send(JSON.stringify({
+                pageName: this.pageName,
+                index: window.location.hash.match(/\w+$/)[0],
+                component: {
+                    name: this.name,
+                    properties: this.properties
+                }
+            })).then(function () {
+                that.goBack();
+            });
         }
     });
 </script>

@@ -1,21 +1,40 @@
 ﻿<dom-module id="admin-components">
     <style>
-
+        :host {
+            overflow-y: auto;
+        }
         .selected {
             background: #9E9E9E;
         }
 
         section {
-            padding: .75em;
+            padding: .75em 1.15em;
+            max-height: 60px;
+            min-height: 60px;
             border-bottom: 1px solid;
         }
 
-        section p {
-            margin: 0;
-        }
+            section p {
+                margin: 0;
+            }
 
         .btn {
             padding: 0;
+        }
+
+        paper-fab {
+            position: absolute;
+            bottom: 1.5em;
+            right: 1.5em;
+            --paper-fab-background: #2196F3;
+        }
+
+        paper-material {
+            background: white;
+            padding: 1em;
+            margin: 2em;
+            width: 100%;
+            max-width: 700px;
         }
     </style>
     <template>
@@ -35,22 +54,59 @@
 
         </template>
 
+        <paper-fab on-tap="openAddComponent" icon="add"></paper-fab>
+
+        <div id="addComponent"
+             class="layout vertical center fit"
+             hidden>
+
+            <paper-material class="layout vertical">
+
+                <article class="layout horizontal center">
+
+                    <h2 class="flex">Add componet</h2>
+
+                    <button on-tap="closeAddComponent"
+                            class="btn">
+
+                        <iron-icon icon="close" alt="clode component">
+                        </iron-icon>
+
+                    </button>
+
+                </article>
+
+                <select id="types">
+                    <template is="dom-repeat" items="[[componentTypes]]">
+                        <option>[[item.Name]]</option>
+                    </template>
+                </select>
+
+                <button on-tap="addComponent"
+                        class="btn self-end">
+
+                    <iron-icon icon="done"
+                               alt="add component">
+                    </iron-icon>
+
+                </button>
+
+            </paper-material>
+
+        </div>
+
     </template>
 </dom-module>
 <script>
     Polymer({
         is: "admin-components",
         properties: {
-            components: Object
-        },
-        attached: function () {
-            console.log(this.components);
+            components: Array,
+            componentTypes: Array,
+            selectedPageName: String
         },
         openComponent: function (event) {
-            var i = event.target,
-                hash = window.location.hash,
-                component,
-                view = this.parentNode.querySelector("component-view");
+            var i = event.target;
 
             while (i.nodeName !== "SECTION") {
                 i = i.parentNode;
@@ -58,14 +114,27 @@
 
             i = i.attributes["index"].value;
 
-            console.log(i);
+            window.location.hash = "#/component/" + i;
+        },
+        openAddComponent: function (event) {
+            this.$.addComponent.hidden = false;
+        },
+        addComponent: function (event) {
+            var that = this;
 
-            component = this.components[i];
+            var component = this.componentTypes[this.$.types.selectedIndex];
+            component.Id = null;
 
-            view.name = component.Name;
-            view.properties = component.Properties;
-
-            window.location.hash = "#/component/" + hash.match(/\w+$/)[0];
+            request("/component/add").send(JSON.stringify({
+                pageName: this.selectedPageName,
+                component: component
+            })).then(function () {
+                that.closeAddComponent();
+                that.fire("pages-changed");
+            });
+        },
+        closeAddComponent: function (event) {
+            this.$.addComponent.hidden = true;
         }
     });
 </script>

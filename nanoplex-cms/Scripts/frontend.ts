@@ -20,13 +20,13 @@ class View {
     }
 
     changeView(newView: string) {
-        var content = document.getElementById("content");
+        var content = <HTMLScriptElement>document.querySelector("#content");
         
         this.View = newView;
 
         content.innerHTML = "<paper-spinner active></paper-spinner>";
 
-        request("/home/page/" + this.View).text(function (page) {
+        request("/page/get/" + this.View).text(function (page) {
             content.innerHTML = page;
         });
     }
