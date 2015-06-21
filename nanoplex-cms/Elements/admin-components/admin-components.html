@@ -3,6 +3,7 @@
         :host {
             overflow-y: auto;
         }
+
         .selected {
             background: #9E9E9E;
         }
@@ -45,9 +46,11 @@
 
                 <p class="flex">{{item.Name}}</p>
 
-                <button class="btn">
-                    <iron-icon icon="close" alt="">
+                <button on-tap="deleteComponent" class="btn">
+
+                    <iron-icon icon="close" alt="delete component">
                     </iron-icon>
+
                 </button>
 
             </section>
@@ -77,9 +80,13 @@
                 </article>
 
                 <select id="types">
+
                     <template is="dom-repeat" items="[[componentTypes]]">
+
                         <option>[[item.Name]]</option>
+
                     </template>
+
                 </select>
 
                 <button on-tap="addComponent"
@@ -98,6 +105,8 @@
     </template>
 </dom-module>
 <script>
+    var test = true;
+
     Polymer({
         is: "admin-components",
         properties: {
@@ -106,18 +115,39 @@
             selectedPageName: String
         },
         openComponent: function (event) {
-            var i = event.target;
+            if (test) {
+                var i = event.target;
 
-            while (i.nodeName !== "SECTION") {
-                i = i.parentNode;
+                while (i.nodeName !== "SECTION") {
+                    i = i.parentNode;
+                }
+
+                i = i.attributes["index"].value;
+
+                window.location.hash = "#/component/" + i;
             }
-
-            i = i.attributes["index"].value;
-
-            window.location.hash = "#/component/" + i;
         },
         openAddComponent: function (event) {
             this.$.addComponent.hidden = false;
+        },
+        deleteComponent: function (event) {
+            var sec = event.target, i;
+
+            test = false;
+
+            while (sec.nodeName !== "SECTION") {
+                sec = sec.parentNode;
+            }
+
+            i = sec.attributes["index"].value;
+
+            request("/component/delete").send(JSON.stringify({
+                pageName: this.selectedPageName,
+                index: i
+            })).then(function () {
+                sec.hidden = true;
+                test = true;
+            });
         },
         addComponent: function (event) {
             var that = this;
