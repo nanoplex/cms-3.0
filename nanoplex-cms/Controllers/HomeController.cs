@@ -1,7 +1,4 @@
 ﻿using System.Web.Mvc;
-using cms;
-using System.Threading.Tasks;
-using MongoDB.Driver;
 
 namespace nanoplex_cms.Controllers
 {

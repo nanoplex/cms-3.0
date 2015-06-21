@@ -1,4 +1,5 @@
 ﻿<dom-module id="component-view">
+
     <style>
         paper-material {
             width: 100%;
@@ -11,8 +12,11 @@
             overflow-y: auto;
         }
     </style>
+
     <template>
+
         <paper-material class="layout vertical flex">
+
             <article class="layout horizontal center">
 
                 <h2 class="flex">[[name]]</h2>
@@ -28,37 +32,40 @@
             </article>
 
             <section id="components" class="flex">
+
                 <template is="dom-repeat"
                           items="{{properties}}">
 
                     <component-property name="[[item.Name]]"
                                         type="[[item.Type]]"
-                                        value="{{item.Value::changed}}">
+                                        value="{{item.Value::property-changed}}"
+                                        class="layout vertical">
                     </component-property>
 
                 </template>
+
             </section>
 
             <button on-tap="saveComponent" class="btn self-end">
+
                 <iron-icon icon="done">
                 </iron-icon>
+
             </button>
+
         </paper-material>
+
     </template>
+
 </dom-module>
+
 <script>
     Polymer({
         is: "component-view",
         properties: {
             pageName: String,
             name: String,
-            properties: {
-                type: Array,
-                notyfi: true
-            }
-        },
-        attached: function () {
-            this.properties;
+            properties: Array
         },
         goBack: function () {
             window.history.back();

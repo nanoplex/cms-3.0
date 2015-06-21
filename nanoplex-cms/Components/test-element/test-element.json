@@ -1,11 +1,16 @@
 ﻿{
   "test": {
-    "type": "string"
+    "type": "string",
+    "value": "test"
   },
   "test1": {
     "type": "object",
     "value": {
       "test": "test"
     }
+  },
+  "test2": {
+    "type": "boolean",
+    "value": true
   }
 }

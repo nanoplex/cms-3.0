@@ -133,9 +133,11 @@
     <Content Include="Elements\admin-nav\admin-nav.html" />
     <Content Include="Elements\admin-nav\admin-nav.js" />
     <Content Include="Elements\component-property\component-property.html" />
+    <Content Include="Elements\component-property\component-property.js" />
     <Content Include="Elements\component-view\component-view.html" />
     <Content Include="Elements\el-admin\el-admin.html" />
     <Content Include="Components\test-element\test-element.html" />
+    <Content Include="Elements\el-admin\el-admin.js" />
     <Content Include="Global.asax" />
     <Content Include="imports.html" />
     <Content Include="Scripts\ajax.js" />
@@ -198,6 +200,7 @@
     <Folder Include="bower_components\iron-meta\" />
     <Folder Include="bower_components\iron-validatable-behavior\" />
     <Folder Include="bower_components\paper-input\" />
+    <Folder Include="Elements\admin-add-component\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Components\" />
     <Folder Include="Views\Page\" />

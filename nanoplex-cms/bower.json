@@ -26,6 +26,7 @@
     "paper-input": "PolymerElements/paper-input#1.0.0",
     "paper-material": "PolymerElements/paper-material#1.0.0",
     "paper-dialog": "PolymerElements/paper-dialog#1.0.0",
-    "paper-fab": "PolymerElements/paper-fab#~1.0.2"
+    "paper-fab": "PolymerElements/paper-fab#~1.0.2",
+    "paper-checkbox": "PolymerElements/paper-checkbox#~1.0.3"
   }
 }
