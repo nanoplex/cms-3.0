@@ -45,10 +45,14 @@
 
         for (var prop in value) {
             var property = document.createElement("component-property"),
-                val = value[prop];
+                val = value[prop],
+                type = typeof val;
+
+            if (Array.isArray(val))
+                type = "array";
 
             property.name = prop;
-            property.type = typeof val;
+            property.type = type;
             property.value = val;
 
             elObj.appendChild(property);
