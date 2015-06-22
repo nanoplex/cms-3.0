@@ -91,6 +91,7 @@
             request("/page/add/" + value).send().then(function () {
                 that.fire("pages-changed");
                 that.closeAddPage();
+                input.value = "";
             });
         }
     },
