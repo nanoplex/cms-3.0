@@ -6,11 +6,16 @@
   "test1": {
     "type": "object",
     "value": {
-      "test": "test"
+      "test": "test",
+      "test1":  0
     }
   },
   "test2": {
     "type": "boolean",
     "value": true
+  },
+  "test3":  {
+    "type": "array",
+    "value": ["test",0]
   }
 }
