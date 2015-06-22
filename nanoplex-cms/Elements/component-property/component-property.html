@@ -1,0 +1,60 @@
+﻿<dom-module id="component-property">
+
+    <style>
+        paper-input {
+            --paper-input-container-color: #616161;
+            --paper-input-container-focus-color: #616161;
+            --paper-input-container-input-color: black;
+        }
+
+        paper-checkbox {
+            --paper-checkbox-unchecked-color: #616161;
+            --paper-checkbox-unchecked-ink-color: #616161;
+            --paper-checkbox-checked-color: #616161;
+            --paper-checkbox-checked-ink-color: #616161;
+        }
+
+        label {
+            margin-right: 16px;
+        }
+
+        #array article {
+            margin-top: 16px;
+        }
+
+        #array p {
+            margin: 0;
+        }
+    </style>
+
+    <template>
+
+        <paper-input label="[[name]]"
+                     type="[[type]]"
+                     hidden$="{{simple}}"
+                     value$="[[value]]"
+                     on-input="updateValue"
+                     required>
+        </paper-input>
+
+        <section class="layout horizontal center"
+                 hidden$="{{bool}}">
+
+            <label>[[name]]</label>
+
+            <paper-checkbox checked$="[[b]]"
+                            on-change="updateValue"
+                            required>
+            </paper-checkbox>
+
+        </section>
+
+        <section id="object"></section>
+
+        <section id="array"></section>
+
+    </template>
+
+</dom-module>
+
+<script src="component-property.js"></script>
