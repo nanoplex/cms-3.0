@@ -215,7 +215,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\backend.ts" />
     <TypeScriptCompile Include="Scripts\frontend.ts" />
   </ItemGroup>
   <PropertyGroup>

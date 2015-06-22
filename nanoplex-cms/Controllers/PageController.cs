@@ -12,6 +12,21 @@ namespace nanoplex_cms.Controllers
     public class PageController : Controller
     {
         [HttpPost]
+        public async Task Add(string id)
+        {
+            var newOrder = DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Exists(p => p.Order, true));
+            newOrder.Wait();
+
+            await DatabaseContext.Pages.InsertOneAsync(new Page { Name = id, Visible = true });
+        }
+
+        [HttpPost]
+        public async Task Delete(string id)
+        {
+            await DatabaseContext.Pages.DeleteOneAsync(Builders<Page>.Filter.Eq(p => p.Name, id));
+        }
+
+        [HttpPost]
         public async Task NewName(string name, string value)
         {
             var query = DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Eq(p => p.Name, name));
@@ -24,21 +39,6 @@ namespace nanoplex_cms.Controllers
 
                 await DatabaseContext.Pages.UpdateOneAsync(Builders<Page>.Filter.Eq(p => p.Name, name), Builders<Page>.Update.Set(p => p.Name, value));
             }
-        }
-
-        [HttpPost]
-        public async Task Delete(string id)
-        {
-            await DatabaseContext.Pages.DeleteOneAsync(Builders<Page>.Filter.Eq(p => p.Name, id));
-        }
-
-        [HttpPost]
-        public async Task Add(string id)
-        {
-            var newOrder = DatabaseContext.Pages.FindAsync(Builders<Page>.Filter.Exists(p => p.Order, true));
-            newOrder.Wait();
-
-            await DatabaseContext.Pages.InsertOneAsync(new Page { Name = id, Visible = true });
         }
 
         [HttpGet]
