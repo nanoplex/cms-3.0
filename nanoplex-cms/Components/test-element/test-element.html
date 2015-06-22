@@ -1,0 +1,37 @@
+﻿<dom-module id="test-element">
+    <style></style>
+    <template>
+        <p>{{test}}</p>
+
+        <p>[[test1.test]]</p>
+        <p>[[test1.test1]]</p>
+
+        <p>[[test2]]</p>
+
+        <template is="dom-repeat" items="{{test3}}">
+            <p>[[item]]</p>
+        </template>
+    </template>
+</dom-module>
+<script>
+    request("/Components/test-element/test-element.json").json(function (properties) {
+
+        for (var prop in properties) {
+            var value = properties[prop];
+
+            if (value === "array") {
+                value = Array;
+            } else if (value.type === "array") {
+                value.type = Array;
+            }
+        }
+
+        Polymer({
+            is: "test-element",
+            properties: properties,
+            ready: function () {
+
+            }
+        });
+    });
+</script>
