@@ -6,8 +6,7 @@
             observer: "pagesChanged"
         },
         componentTypes: Array,
-        selectedPage: Object,
-        selectedComponent: Object
+        selectedPage: Object
     },
     attached: function () {
         var that = this;
@@ -35,25 +34,30 @@
             var hash = window.location.hash,
                 location = hash.match(/(?!#\/)\w+/),
                 components = that.querySelector("admin-components"),
-                view = that.querySelector("component-view");
+                oldView = that.querySelector("component-view");
 
             if (location) {
                 location = location[0];
             }
 
             components.hidden = true;
-            view.hidden = true;
+            if (oldView) oldView.parentNode.removeChild(oldView);
 
             if (location === "page") {
                 that.selectedPage = that.getSelectedPage(that.pages);
 
                 components.hidden = false;
             } else if (location === "component" && that.selectedPage) {
-                var i = parseInt(hash.match(/\w+$/)[0]);
+                var newView = document.createElement("component-view"),
+                    i = parseInt(hash.match(/\w+$/)[0]),
+                    component = that.selectedPage.Components[i];
+                    
+                newView.className = "layout vertical center flex style-scope el-admin";
+                newView.pageName = that.selectedPage.Name;
+                newView.name = component.Name;
+                newView.properties = component.Properties
 
-                that.selectedComponent = that.selectedPage.Components[i];
-
-                view.hidden = false;
+                that.$.content.appendChild(newView);
             }
         });
     },
