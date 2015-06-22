@@ -1,0 +1,54 @@
+﻿[
+    {
+        "Name": "test",
+        "Frontend": "",
+        "Properties": [
+            {
+                "Name": "string",
+                "Type": "string",
+                "Validation": "true"
+            },
+            {
+                "Name": "textbox",
+                "Type": "longString",
+                "Validation": "true"
+            },
+            {
+                "Name": "int",
+                "Type": "int",
+                "Validation": "true"
+            },
+            {
+                "Name": "bool",
+                "Type": "boolean",
+                "Validation": "false"
+            },
+            {
+                "Name": "image",
+                "Type": "image",
+                "Validation": "false"
+            },
+            {
+                "Name": "text component",
+                "Type": "text",
+                "Validation": "false"
+            }
+        ]
+    },
+    {
+        "Name": "text",
+        "Frontend": "<p style='font-size:{{size}}px'>{{text}}</p>",
+        "Properties": [ 
+            {
+                "Name": "text",
+                "Type": "string",
+                "Validation": "true"
+            },
+            {
+                "Name": "size",
+                "Type": "int",
+                "Validation": "true"
+            }
+        ]
+    }
+]

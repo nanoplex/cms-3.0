@@ -1,0 +1,208 @@
+﻿<dom-module is="el-admin">
+    <link rel="import" type="css" href="el-admin.css">
+    <template>
+
+        <header id="header" hidden
+                class="layout horizontal center">
+
+            <div id="logo"><p>np</p></div>
+
+            <h1 class="flex">[[site.ProjectName]]</h1>
+
+            <button on-tap="toggleMore">
+                <core-icon icon="more-vert" alt="options">
+                </core-icon>
+            </button>
+
+            <section id="more" hidden>
+                <button class="layout horizontal center" on-tap="showStatistics">
+                    <core-icon class="flex" icon="social:poll"></core-icon>
+                    <p>statistics</p>
+                </button>
+                <button class="layout horizontal center" on-tap="showSettings">
+                    <core-icon class="flex" icon="settings"></core-icon>
+                    <p>settings</p>
+                </button>
+            </section>
+
+        </header>
+
+        <section class="layout horizontal flex">
+
+            <nav id="nav" hidden>
+
+                <template is="x-repeat"
+                          items="[[site.Pages]]">
+
+                    <section class="layout horizontal center">
+
+                        <p on-tap="selectPage"
+                           class="flex">[[item.Name]]</p>
+
+                        <button data-id$="[[item.Id]]"
+                                on-tap="deletePage">
+                            <core-icon icon="close" alt="delete page">
+                            </core-icon>
+                        </button>
+
+                    </section>
+
+                </template>
+
+            </nav>
+
+            <core-selector attr-for-selected="view"
+                           selected="{{selectedView}}">
+
+                <article id="viewLoading"
+                         view="viewLoading"
+                         class="layout vertical center">
+
+                    <paper-spinner active>
+                    </paper-spinner>
+
+                </article>
+
+                <article id="viewInstall"
+                         view="viewInstall"
+                         class="layout vertical center">
+
+                    <h2>choose project name</h2>
+
+                    <label for="name">name</label>
+
+                    <input type="text"
+                           name="name"
+                           required />
+
+                    <button on-tap="initProject"
+                            class="self-end">
+                        <core-icon icon="check" alt="done">
+                        </core-icon>
+                    </button>
+                </article>
+
+                <article id="viewLogin"
+                         view="viewLogin"
+                         class="layout vertical center"></article>
+
+                <article id="viewAddPage"
+                         view="viewAdd-Page"
+                         class="layout vertical center">
+
+                    <section class="layout horizontal center">
+
+                        <h2 class="flex">add page</h2>
+
+                        <button on-tap="home">
+                            <core-icon icon="close" alt="close">
+                            </core-icon>
+                        </button>
+
+                    </section>
+
+
+                    <label for="name">name</label>
+
+                    <input type="text"
+                           name="name"
+                           required />
+
+                    <section class="layout horizontal center">
+
+                        <p class="status flex"></p>
+
+                        <button on-tap="addPage">
+                            <core-icon icon="check" alt="done">
+                            </core-icon>
+                        </button>
+
+                    </section>
+                </article>
+
+                <article id="viewSelectComponent"
+                         view="viewSelect-Component"
+                         class="layout vertical center">
+
+                    <section class="layout horizontal center">
+                        <h2>select component type</h2>
+                        <button on-tap="home">
+                            <core-icon icon="close" alt="close">
+                            </core-icon>
+                        </button>
+                    </section>
+
+                    <select></select>
+
+                    <button on-tap="showAddComponent"
+                            class="self-end">
+                        <core-icon icon="check" alt="add component"></core-icon>
+                    </button>
+
+                </article>
+
+                <article id="viewComponent"
+                         view="viewComponent"
+                         class="layout vertical center"></article>
+
+                <article id="viewStatistics"
+                         view="viewStatistics">
+                    <section id="statsOff" class="layout horizontal center" hidden>
+                        <p>turn statistics on</p>
+                        <button on-tap="toggleStatistics">
+                            <core-icon icon="radio-button-off"></core-icon>
+                        </button>
+                    </section>
+                    <section id="statsOn" hidden>
+                        <section class="layout horizontal center">
+                            <p>turn statistics off</p>
+                            <button on-tap="toggleStatistics">
+                                <core-icon icon="radio-button-on"></core-icon>
+                            </button>
+                        </section>
+                    </section>
+                </article>
+
+            </core-selector>
+
+        </section>
+
+        <section id="add"
+                 class="layout vertical center"
+                 hidden>
+
+            <section id="options"
+                     class="layout vertical end"
+                     hidden>
+
+                <button on-tap="showAddPage"
+                        class="layout horizontal center">
+
+                    <p>page</p>
+
+                    <core-icon icon="note-add" alt="add page">
+                    </core-icon>
+
+                </button>
+
+                <button on-tap="showSelectComponent"
+                        class="layout horizontal center">
+
+                    <p>component</p>
+
+                    <core-icon icon="extension" alt="add component">
+                    </core-icon>
+
+                </button>
+
+            </section>
+
+            <button on-tap="toggleAdd">
+                <core-icon icon="add" alt="add">
+                </core-icon>
+            </button>
+
+        </section>
+    </template>
+</dom-module>
+<script src="el-admin.js"></script>

@@ -1,0 +1,27 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="import" href="/bower_components/core-ajax/core-request.html" />
+    <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html" />
+</head>
+<body>
+    <h1></h1>
+    <ul></ul>
+    <section>
+        <article id="loading" style="display:flex; margin: 5em">
+            <paper-spinner style="margin: 0 auto" active></paper-spinner>
+        </article>
+        <article id="missing" hidden>
+            <p>page does not exits</p>
+        </article>
+    </section>
+
+    <script src="~/home.js"></script>
+</body>
+</html>
