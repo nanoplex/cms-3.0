@@ -1,41 +1,25 @@
 ﻿<dom-module id="admin-components">
     <style>
         :host {
-            overflow-y: auto;
-        }
-
-        .selected {
-            background: #9E9E9E;
+            background: #F5F5F5;
         }
 
         section {
-            padding: .75em 1.15em;
-            max-height: 60px;
-            min-height: 60px;
-            border-bottom: 1px solid;
-        }
-
-            section p {
-                margin: 0;
-            }
-
-        .btn {
-            padding: 0;
+            background: #E0E0E0;
+            padding: 0 14.5px;
+            border-bottom: 1px solid #424242;
         }
 
         paper-fab {
             position: absolute;
-            bottom: 1.5em;
-            right: 1.5em;
-            --paper-fab-background: #2196F3;
+            bottom: 16px;
+            right: 16px;
+            --paper-fab-background: #424242;
         }
 
-        paper-material {
-            background: white;
-            padding: 1em;
-            margin: 2em;
-            width: 100%;
-            max-width: 700px;
+        select {
+            padding: 4px;
+            margin-bottom: 16px;
         }
     </style>
     <template>
@@ -63,7 +47,7 @@
              class="layout vertical center fit"
              hidden>
 
-            <paper-material class="layout vertical">
+            <paper-material class="dialog top layout vertical">
 
                 <article class="layout horizontal center">
 

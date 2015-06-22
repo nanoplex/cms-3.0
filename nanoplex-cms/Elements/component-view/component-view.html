@@ -1,21 +1,37 @@
 ﻿<dom-module id="component-view">
 
     <style>
-        paper-material {
-            width: 100%;
-            max-width: 700px;
-            margin: 2em .5em 1em .5em;
-            padding: 1em;
+        :host {
+            display: flex;
         }
 
         #components {
             overflow-y: auto;
         }
+
+        component-property {
+            margin-bottom: 16px;
+        }
+
+        article:first-child {
+            margin: 8px 0;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        paper-fab {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            --paper-fab-background: #424242;
+        }
     </style>
 
     <template>
 
-        <paper-material class="layout vertical flex">
+        <paper-material class="dialog layout vertical flex">
 
             <article class="layout horizontal center">
 
@@ -46,14 +62,9 @@
 
             </section>
 
-            <button on-tap="saveComponent" class="btn self-end">
-
-                <iron-icon icon="done">
-                </iron-icon>
-
-            </button>
-
         </paper-material>
+
+        <paper-fab on-tap="saveComponent" icon="check"></paper-fab>
 
     </template>
 

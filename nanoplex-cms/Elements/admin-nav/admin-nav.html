@@ -1,142 +1,49 @@
 ﻿<dom-module id="admin-nav">
 
     <style>
-        :host > section iron-icon {
-            fill: white !important;
-        }
-
         :host {
-            border-right: 1px solid;
-        }
-
-        paper-input {
-            margin: -10.5px 0;
-            --paper-input-container-input-color: #212121;
-            --paper-input-container-color: #212121;
-            --paper-input-container-focus-color: #212121;
-        }
-
-        .selected {
-            background: #9E9E9E;
-        }
-
-        nav {
-            border-top: 1px solid;
-        }
-
-        nav, .page, .page p {
-            width: 100%;
+            width: 230px;
+            border-right: 1px solid #424242;
+            background: #F5F5F5;
         }
 
         .page {
-            height: 40px;
-            padding: .5em;
-            overflow: hidden;
-            border-bottom: 1px solid;
-            -moz-transform: scaleY(1);
-            -ms-transform: scaleY(1);
-            -o-transform: scaleY(1);
-            -webkit-transform: scaleY(1);
-            transform: scaleY(1);
-            -moz-transform-origin: 18px 0;
-            -ms-transform-origin: 18px 0;
-            -o-transform-origin: 18px 0;
-            -webkit-transform-origin: 18px 0;
-            transform-origin: 18px 0;
-            -moz-transition: .3s transform;
-            -o-transition: .3s transform;
-            -webkit-transition: .3s transform;
-            transition: .3s transform;
+            position: relative;
+            padding: 0 16px;
+            border-bottom: 1px solid #424242;
         }
 
-            .page[hidden] {
-                display: flex !important;
-                max-height: 0;
-                margin-bottom: -17px;
-                -moz-transform: scaleY(0);
-                -ms-transform: scaleY(0);
-                -o-transform: scaleY(0);
-                -webkit-transform: scaleY(0);
-                transform: scaleY(0);
+            .page > article {
+                margin-right: 16px;
             }
 
-            .page p {
-                margin: 0;
-                text-align: start;
-            }
+        .selected {
+            background-color: #E0E0E0;
+        }
 
-            .page button {
-                padding: 0;
-            }
-
-            .page article:first-child {
-                margin-right: .5em;
-                -moz-transition: .3s width;
-                -o-transition: .3s width;
-                -webkit-transition: .3s width;
-                transition: .3s width;
-                width: 11px;
-                overflow: hidden;
-            }
-
-            .page article[hidden] {
-                display: block !important;
-                width: 0;
-            }
-
-            .page > button {
-                margin: 0 .5em;
-                -moz-transition: .3s width;
-                -o-transition: .3s width;
-                -webkit-transition: .3s width;
-                transition: .3s width;
-                overflow: hidden;
-                width: 20px;
-            }
-
-                .page > button[hidden] {
-                    display: block !important;
-                    width: 0;
-                }
-
-        section {
+        .name p {
             width: 100%;
-            background: #616161;
+            padding: 15px 0;
+            margin: 0;
+            z-index: 2;
+            position: relative;
         }
 
-        .btn iron-icon {
-            fill: black;
+        paper-input {
+            margin: 0.25em 0;
+            --paper-input-container-color: #616161;
+            --paper-input-container-focus-color: #616161;
+            --paper-input-container-input-color: black;
         }
 
-        .btn:hover {
-            background: transparent;
+        :host > section {
+            background: #9E9E9E;
+            padding: 8px;
+            border-top: 1px solid #424242;
         }
 
-        paper-material {
-            background: white;
-            padding: 1em;
-            margin: 2em;
-            width: 100%;
-            max-width: 700px;
-        }
-
-        #addPage h2 {
-        }
-
-        #addPage button:hover {
-            background: rgba(0,0,0,.15);
-        }
-
-        #addPage iron-icon {
-            fill: #212121;
-        }
-
-        #addPage paper-input {
-            margin-bottom: 1em;
-        }
-
-        p {
-            cursor: pointer;
+        paper-ripple {
+            z-index: 1;
         }
     </style>
 
@@ -150,6 +57,9 @@
                 <div index$="{{index}}"
                      class="page layout horizontal center">
 
+                    <paper-ripple recenters hidden="{{editMode}}">
+                    </paper-ripple>
+
                     <article class="layout vertical center"
                              hidden$="{{!editMode}}">
 
@@ -161,8 +71,10 @@
                         </button>
 
                         <button class="btn small">
+
                             <iron-icon icon="expand-more" alt="down">
                             </iron-icon>
+
                         </button>
 
                     </article>
@@ -218,7 +130,7 @@
              class="layout vertical center fit"
              hidden>
 
-            <paper-material class="layout vertical">
+            <paper-material class="dialog top layout vertical">
 
                 <article class="layout horizontal center">
 

@@ -1,42 +1,27 @@
 ﻿<dom-module id="el-admin">
 
     <style>
-        :host > article {
-            width: 100%;
+        paper-material {
+            padding: 8px 16px;
+            background: #9E9E9E;
         }
 
-        header {
-            width: 100%;
-            padding: .25em .5em;
-            border-bottom: 1px solid;
-        }
-
-            header img {
-                width: 3em;
-                margin-right: .5em;
+            paper-material img {
+                width: 56px;
+                margin-right: 16px;
             }
-
-            header h2 {
-                margin: 0;
-            }
-
-        admin-nav {
-            min-height: 100%;
-            max-height: 100%;
-            width: 200px;
-        }
     </style>
 
     <template>
 
         <admin-nav pages="[[pages]]"
                    selected-page="{{selectedPage.Name}}"
-                   class="layout vertical center">
+                   class="layout vertical">
         </admin-nav>
 
-        <article class="layout vertical flex">
+        <article id="content" class="layout vertical flex">
 
-            <header class="layout horizontal center">
+            <paper-material elevation="2" class="layout horizontal center">
 
                 <img src="http://nanoplex.dk/logo.svg"
                      alt="nanoplex logo" />
@@ -51,20 +36,13 @@
 
                 </button>
 
-            </header>
+            </paper-material>
 
-            <admin-components class="layout vertical"
+            <admin-components class="layout vertical flex"
                               components="{{selectedPage.Components}}"
                               component-types="[[componentTypes]]"
                               selected-page-name="[[selectedPage.Name]]">
             </admin-components>
-
-            <component-view name="[[selectedComponent.Name]]"
-                            properties="{{selectedComponent.Properties}}"
-                            page-name="[[selectedPage.Name]]"
-                            class="layout vertical center flex"
-                            hidden>
-            </component-view>
 
         </article>
 
